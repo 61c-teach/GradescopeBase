@@ -1,7 +1,7 @@
 """
 This is a test in gradescope.
 """
-
+from .Timeout import Timeout
 from . import Visibility
 
 global_tests = []
@@ -21,6 +21,7 @@ class AutograderTest:
         extra_data=None,
         kill_autograder_on_error: bool=False,
         do_not_set_score: bool=False,
+        timeout: int=None
     ):
         """
         The test_fn MUST take in parameters Autograder and AutograderTest in that order.
@@ -37,6 +38,7 @@ class AutograderTest:
         self.output = ""
         self.kill_autograder_on_error = kill_autograder_on_error
         self.do_not_set_score = do_not_set_score
+        self.timeout = timeout
         global_tests.append(self)
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
@@ -46,21 +48,32 @@ class AutograderTest:
         self.score = score
 
     def run(self, ag):
-        def f():
-            r = self.test_fn(ag, self)
+        
+        def set_score(r):
             if self.do_not_set_score:
                 return
             if isinstance(r, (int, float)):
                 self.set_score(r)
             if isinstance(r, Max) and self.max_score is not None:
                 self.set_score(self.max_score)
+
+        def f():
+            try:
+                with Timeout(self.timeout):
+                    r = self.test_fn(ag, self)
+                    set_score(r)
+            except Timeout.Timeout:
+                self.print("[ERROR]: This test timed out!")
+                set_score(0)
+
         def handler():
             if not self.do_not_set_score:
                 self.set_score(0)
             if self.kill_autograder_on_error:
                 return False
-            self.print("An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
+            self.print("[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
             return True
+
         ag.safe_env(f, handler=handler)
 
     def get_results(self):
