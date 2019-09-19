@@ -10,6 +10,10 @@ results_file = "/autograder/results/results.json"
 if os.path.isfile("/.localhost"):
     results_file = "./results.json"
 
+class AutograderError(Exception):
+    def __init__(self, info: any=None):
+        self.info = info
+
 class Autograder:
     def __init__(self):
         self.tests = []
@@ -78,7 +82,7 @@ class Autograder:
     
     def safe_env(self, f, handler=None):
         try:
-            f()
+            return f()
         except Exception as exc:
             print("An exception occured in the safe environment!")
             import traceback
@@ -86,11 +90,13 @@ class Autograder:
             print(exc)
             if handler is not None:
                 try:
-                    if handler():
-                        return
+                    h = handler()
+                    if h:
+                        return AutograderError(h)
                 except Exception as exc:
                     print("An exception occured while executing the exception handler!")
             self.ag_fail("An unexpected exception ocurred while trying to execute the autograder. Please try again or contact a TA if this persists.")
+            return AutograderError()
 
     def run_tests(self):
         for test in self.tests:
