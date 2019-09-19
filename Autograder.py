@@ -4,7 +4,7 @@ This is the base of the autograder.
 import json
 import datetime
 import os
-from .AutograderTest import AutograderTest, global_tests
+from .AutograderTest import AutograderTest, global_tests, Max
 
 results_file = "/autograder/results/results.json"
 if os.path.isfile("/.localhost"):
