@@ -133,5 +133,5 @@ class Autograder:
 
     @staticmethod
     def root_dir() -> str:
-        from Utils import root_dir
+        from .Utils import root_dir
         return root_dir()
