@@ -88,7 +88,7 @@ class AutograderTest:
         if isinstance(self.tags, list):
             data["tags"] = self.tags
         if self.visibility is not None:
-            data["visibility"] = self.visibility
+            data["visibility"] = self.visibility.name
         if self.extra_data is not None:
             data["extra_data"] = self.extra_data
         if self.score is not None:
