@@ -93,3 +93,8 @@ class AutograderTest:
         if self.score is not None:
             data["score"] = self.score
         return data
+
+    @staticmethod
+    def root_dir() -> str:
+        from Utils import root_dir
+        return root_dir()

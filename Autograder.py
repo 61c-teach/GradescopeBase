@@ -133,8 +133,5 @@ class Autograder:
 
     @staticmethod
     def root_dir() -> str:
-        """
-        This function assumes the root directory is the one right above the GradescopeBase folder.
-        """
-        dirname = os.path.dirname
-        return dirname(dirname(os.path.realpath(__file__)))
+        from Utils import root_dir
+        return root_dir()
