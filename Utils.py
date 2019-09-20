@@ -6,3 +6,9 @@ def root_dir() -> str:
         """
         dirname = os.path.dirname
         return dirname(dirname(os.path.realpath(__file__)))
+
+def submission_dir() -> str:
+        """
+        This returns the dir which contains the submission.
+        """
+        return "/autograder/submission"

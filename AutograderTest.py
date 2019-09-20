@@ -3,6 +3,7 @@ This is a test in gradescope.
 """
 from .Timeout import Timeout
 from . import Visibility
+from .Utils import root_dir, submission_dir
 
 global_tests = []
 
@@ -96,5 +97,8 @@ class AutograderTest:
 
     @staticmethod
     def root_dir() -> str:
-        from .Utils import root_dir
         return root_dir()
+
+    @staticmethod
+    def submission_dir() -> str:
+        return submission_dir()

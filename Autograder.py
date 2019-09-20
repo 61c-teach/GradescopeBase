@@ -5,6 +5,7 @@ import json
 import datetime
 import os
 from .AutograderTest import AutograderTest, global_tests, Max
+from .Utils import root_dir, submission_dir
 
 results_file = "/autograder/results/results.json"
 if os.path.isfile("/.localhost"):
@@ -133,5 +134,8 @@ class Autograder:
 
     @staticmethod
     def root_dir() -> str:
-        from .Utils import root_dir
         return root_dir()
+
+    @staticmethod
+    def submission_dir() -> str:
+        return submission_dir()
