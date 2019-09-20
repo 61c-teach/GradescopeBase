@@ -130,3 +130,8 @@ class Autograder:
     def execute(self):
         self.run_tests()
         self.generate_results()
+
+    @staticmethod
+    def root_dir() -> str:
+        dirname = os.path.dirname
+        return dirname(dirname(os.path.realpath(__file__)))
