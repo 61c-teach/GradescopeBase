@@ -68,7 +68,7 @@ class Autograder:
             ag.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
             return True
         def wrapper():
-            self.rate_limit_fn()
+            ag.rate_limit_fn()
             f(ag)
         ag.safe_env(wrapper, handler)
 
