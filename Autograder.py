@@ -194,7 +194,7 @@ class Autograder:
                         dstr += "" if dstr == "" or d == 1 else "s"
                         st = dstr
                         for tmpstr in [hstr, mstr, sstr]:
-                            if st != "":
+                            if st != "" and tmpstr != "":
                                 st += " "
                             st += tmpstr
                         if st == "":
@@ -227,7 +227,7 @@ class Autograder:
                                 pass
                         print("------------------------------")
                     if tokens_used < tokens:
-                        self.extra_data["counts"] = 0
+                        self.extra_data["counts"] = 1
                         self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
                     else:
                         self.extra_data["counts"] = 0
