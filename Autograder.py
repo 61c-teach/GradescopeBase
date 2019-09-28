@@ -151,7 +151,7 @@ class Autograder:
         if self.extra_data:
             results["extra_data"] = self.extra_data
         if self.leaderboard is not None:
- ß          results["leaderboard"] = self.leaderboard
+            results["leaderboard"] = self.leaderboard
         if dump:
             self.dump_results(results)
         return results
