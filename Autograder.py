@@ -18,7 +18,7 @@ class AutograderError(Exception):
         self.info = info
 
 class Autograder:
-    def __init__(self, rate_limit=None:
+    def __init__(self, rate_limit=None):
         self.tests = []
         self.results_file = results_file
         self.score = None
