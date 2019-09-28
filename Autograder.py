@@ -2,6 +2,7 @@
 This is the base of the autograder.
 """
 import json
+import time
 import datetime
 import os
 from .AutograderTest import AutograderTest, global_tests, Max
@@ -17,6 +18,23 @@ class AutograderError(Exception):
     def __init__(self, info: any=None):
         self.info = info
 
+class RateLimit:
+    def __init__(
+        self,
+        tokens:int=None,
+        seconds:int=0,
+        minutes:int=0,
+        hours:int=0,
+        days:int=0,
+        reset_time:str=None
+    ):
+        self.tokens = tokens
+        self.seconds = seconds
+        self.minutes = minutes
+        self.hours = hours
+        self.days = days
+        self.reset_time = reset_time
+
 class Autograder:
     def __init__(self, rate_limit=None):
         self.tests = []
@@ -27,15 +45,11 @@ class Autograder:
         self.stdout_visibility = None
         self.extra_data = {}
         self.leaderboard = None
-        # Rate limit takes in a tuple of ints with the following form:
-        # (tokens, (seconds, minutes, hours, days), reset_time)
-        # Where tokens is the number of tokens a student gets
-        # and (seconds, minutes, hours, days) are all ints which describe how
-        # long it takes for a student to regernate these tokens.
+        # rate_limit takes in a RateLimit class.
         # reset_time is when you want to reset the submission time. You
         # can leave it out to ignore. Put the time stirng in this format:
         #  "2018-11-29T16:15:00"
-        self.rate_limit = None
+        self.rate_limit:RateLimit = None
         self.start_time = datetime.datetime.now()
 
     @staticmethod
@@ -137,7 +151,7 @@ class Autograder:
         if self.extra_data:
             results["extra_data"] = self.extra_data
         if self.leaderboard is not None:
-            results["leaderboard"] = self.leaderboard
+ ß          results["leaderboard"] = self.leaderboard
         if dump:
             self.dump_results(results)
         return results
@@ -155,12 +169,13 @@ class Autograder:
         return submission_dir()
     
     def rate_limit_fn(self):
-        if self.rate_limit is not None:
-                if 2 <= len(self.rate_limit) <= 3 and len(self.rate_limit[1]) != 3:
-                    tokens = self.rate_limit[0]
-                    time = self.rate_limit[1]
-                    restart_subm_string = self.rate_limit[2] if len(self.rate_limit) == 4 else None
-                    s, m, h, d = time
+        if isinstance(self.rate_limit, RateLimit) and self.rate_limit.tokens is not None:
+                    tokens = self.rate_limit.tokens
+                    restart_subm_string = self.rate_limit.reset_time
+                    s = self.rate_limit.seconds
+                    m = self.rate_limit.minutes
+                    h = self.rate_limit.hours
+                    d = self.rate_limit.days
                     regen_time_seconds = s + 60 * (m + 60 * (h + (24 * d)))
                     def get_submission_time(s):
                         return s[:-13]
@@ -181,7 +196,6 @@ class Autograder:
                         if st == "":
                             st = "none"
                         return st
-                    with open(results_file, "w+") as jsonResults:
                     with open(submission_metadata, "r") as jsonMetadata:
                         metadata = json.load(jsonMetadata)
                     current_subm_string = get_submission_time(metadata["created_at"])
@@ -219,7 +233,8 @@ class Autograder:
                             results["extra_data"]["counts"] = 0
                             results["output"] = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission."
                             results["tests"] = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["results"]["tests"]
-	                        results["score"] = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
+                            results["score"] = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
                         json.dump(results, jsonResults)
-                else:
-                    ag.ag_fail("There is an issue with how ratelimiting was set up!")
+                        if tokens_used >= tokens:
+                            import sys
+                            sys.exit()

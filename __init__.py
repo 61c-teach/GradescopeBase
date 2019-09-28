@@ -1,4 +1,4 @@
-from .Autograder import Autograder, AutograderError
+from .Autograder import Autograder, AutograderError, RateLimit
 from .AutograderTest import AutograderTest, Max, global_tests
 from .Visibility import Visibility
 
@@ -23,6 +23,7 @@ def Test(*args, **kwargs):
 __all__ = [
     "Autograder",
     "AutograderError",
+    "RateLimit",
     "AutograderTest",
     "Visibility",
     "Max",
