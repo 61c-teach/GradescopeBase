@@ -185,13 +185,13 @@ class Autograder:
                         return s[:-13]
                     def pretty_time_str(s, m, h, d):
                         sstr = "" if s == 0 else str(s) + " second"
-                        sstr += "" if sstr != "" and s == 1 else "s"
+                        sstr += "" if sstr == "" and s == 1 else "s"
                         mstr = "" if m == 0 else str(s) + " minute"
-                        mstr += "" if mstr != "" and m == 1 else "s"
+                        mstr += "" if mstr == "" and m == 1 else "s"
                         hstr = "" if h == 0 else str(s) + " hour"
-                        hstr += "" if hstr != "" and h == 1 else "s"
+                        hstr += "" if hstr == "" and h == 1 else "s"
                         dstr = "" if d == 0 else str(s) + " day"
-                        dstr += "" if dstr != "" and d == 1 else "s"
+                        dstr += "" if dstr == "" and d == 1 else "s"
                         st = dstr
                         for tmpstr in [hstr, mstr, sstr]:
                             if st != "":
