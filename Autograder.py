@@ -206,6 +206,7 @@ class Autograder:
                     current_time = time.strptime(current_subm_string,"%Y-%m-%dT%H:%M:%S")
                     restart_time = time.strptime(restart_subm_string, "%Y-%m-%dT%H:%M:%S") if restart_subm_string is not None else None
                     tokens_used = 0
+                    print("=" * 30)
                     for i, v in enumerate(metadata["previous_submissions"]):
                         subm_string = get_submission_time(v["submission_time"])
                         subm_time = time.strptime(subm_string,"%Y-%m-%dT%H:%M:%S")
@@ -225,9 +226,11 @@ class Autograder:
                             except: 
                                 tokens_used = tokens_used + 1
                                 pass
-                        print("------------------------------")
+                        print("-" * 30)
+                    print("=" * 30)
                     if tokens_used < tokens:
                         self.extra_data["counts"] = 1
+                        tokens_used += 1 # This is to include the current submission.
                         self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
                     else:
                         self.extra_data["counts"] = 0
