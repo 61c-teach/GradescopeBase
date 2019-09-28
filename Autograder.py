@@ -185,13 +185,13 @@ class Autograder:
                         return s[:-13]
                     def pretty_time_str(s, m, h, d):
                         sstr = "" if s == 0 else str(s) + " second"
-                        sstr += "" if s == 1 else "s"
+                        sstr += "" if sstr != "" and s == 1 else "s"
                         mstr = "" if m == 0 else str(s) + " minute"
-                        mstr += "" if m == 1 else "s"
+                        mstr += "" if mstr != "" and m == 1 else "s"
                         hstr = "" if h == 0 else str(s) + " hour"
-                        hstr += "" if h == 1 else "s"
+                        hstr += "" if hstr != "" and h == 1 else "s"
                         dstr = "" if d == 0 else str(s) + " day"
-                        dstr += "" if d == 1 else "s"
+                        dstr += "" if dstr != "" and d == 1 else "s"
                         st = dstr
                         for tmpstr in [hstr, mstr, sstr]:
                             if st != "":
@@ -227,10 +227,9 @@ class Autograder:
                                 pass
                         print("------------------------------")
                     if tokens_used < tokens:
-                        tokens_used += 1
                         self.extra_data["counts"] = 0
                         self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
-                    if tokens_used >= tokens:
+                    else:
                         self.extra_data["counts"] = 0
                         self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission."
                         self.score = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
