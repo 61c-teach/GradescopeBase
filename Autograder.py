@@ -49,7 +49,7 @@ class Autograder:
         # reset_time is when you want to reset the submission time. You
         # can leave it out to ignore. Put the time stirng in this format:
         #  "2018-11-29T16:15:00"
-        self.rate_limit:RateLimit = None
+        self.rate_limit:RateLimit = rate_limit
         self.start_time = datetime.datetime.now()
 
     @staticmethod
@@ -68,7 +68,6 @@ class Autograder:
             ag.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
             return True
         def wrapper():
-            ag.rate_limit_fn()
             f(ag)
         ag.safe_env(wrapper, handler)
 
@@ -131,17 +130,21 @@ class Autograder:
         for test in self.tests:
             test.run(self)
 
-    def generate_results(self, dump=True):
+    def generate_results(self, test_results=None, dump=True):
         results = {
             "execution_time": (datetime.datetime.now() - self.start_time).total_seconds(),
         }
-        tests = []
-        for test in self.tests:
-            res = test.get_results()
-            if res:
-                tests.append(res)
-        if tests:
-            results["tests"] = tests
+        if test_results is None:
+            tests = []
+            for test in self.tests:
+                res = test.get_results()
+                if res:
+                    tests.append(res)
+            if tests:
+                results["tests"] = tests
+        else:
+            if isinstance(test_results, list):
+                results["tests"] = test_results
         if self.output is not None:
             results["output"] = self.output
         if self.visibility is not None:
@@ -157,6 +160,7 @@ class Autograder:
         return results
         
     def execute(self):
+        self.rate_limit_fn()
         self.run_tests()
         self.generate_results()
 
@@ -222,19 +226,14 @@ class Autograder:
                                 tokens_used = tokens_used + 1
                                 pass
                         print("------------------------------")
-                    with open(results_file, "w+") as jsonResults:
-                        results = json.load(jsonResults)
-                        results["extra_data"] = {}
-                        if tokens_used < tokens:
-                            tokens_used += 1
-                            results["extra_data"]["counts"] = 1
-                            results["output"] = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
-                        if tokens_used >= tokens:
-                            results["extra_data"]["counts"] = 0
-                            results["output"] = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission."
-                            results["tests"] = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["results"]["tests"]
-                            results["score"] = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
-                        json.dump(results, jsonResults)
-                        if tokens_used >= tokens:
-                            import sys
-                            sys.exit()
+                    if tokens_used < tokens:
+                        tokens_used += 1
+                        self.extra_data["counts"] = 0
+                        self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
+                    if tokens_used >= tokens:
+                        self.extra_data["counts"] = 0
+                        self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission."
+                        self.score = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
+                        self.generate_results(test_results=metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["results"]["tests"])
+                        import sys
+                        sys.exit()
