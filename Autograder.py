@@ -6,6 +6,8 @@ import time
 import datetime
 import os
 from .AutograderTest import AutograderTest, global_tests, Max
+from .AutograderSetup import global_setups
+from .AutograderTeardown import global_teardowns
 from .Utils import root_dir, submission_dir
 
 results_file = "/autograder/results/results.json"
@@ -38,6 +40,8 @@ class RateLimit:
 class Autograder:
     def __init__(self, rate_limit=None):
         self.tests = []
+        self.setups = []
+        self.teardowns = []
         self.results_file = results_file
         self.score = None
         self.output = None
@@ -57,6 +61,10 @@ class Autograder:
         def f(ag):
             for t in global_tests:
                 ag.add_test(t)
+            for s in global_setups:
+                ag.add_setup(s)
+            for t in global_teardowns:
+                ag.add_teardown(t)
             ag.execute()
         Autograder.main(f, ag=ag)
 
@@ -82,6 +90,12 @@ class Autograder:
             return
         raise ValueError("You must add type Test to the autograder.")
 
+    def add_setup(self, setupfn):
+        self.setups.append(setupfn)
+
+    def add_teardown(self, teardownfn):
+        self.teardowns.append(teardownfn)
+
     def set_score(self, score):
         self.score = score
     
@@ -92,6 +106,9 @@ class Autograder:
     
     def get_score(self):
         return self.score
+
+    def print(self, *args, sep=' ', end='\n', file=None, flush=True):
+        self.output += sep.join(args) + end
 
     def create_test(self, *args, **kwargs):
         test = AutograderTest(*args, **kwargs)
@@ -127,8 +144,15 @@ class Autograder:
             return AutograderError()
 
     def run_tests(self):
+        for setup in self.setups:
+            if not setup.run(self):
+                return False
         for test in self.tests:
             test.run(self)
+        for teardown in self.teardowns:
+            if not teardown.run(self):
+                return False
+        return True
 
     def generate_results(self, test_results=None, dump=True):
         results = {
@@ -161,7 +185,8 @@ class Autograder:
         
     def execute(self):
         self.rate_limit_main()
-        self.run_tests()
+        if not self.run_tests():
+            print("An error has occured when attempting to run all tests.")
         self.generate_results()
 
     @staticmethod

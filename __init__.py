@@ -1,5 +1,7 @@
 from .Autograder import Autograder, AutograderError, RateLimit
 from .AutograderTest import AutograderTest, Max, global_tests
+from .AutograderSetup import AutograderSetup
+from .AutograderTeardown import AutograderTeardown
 from .Visibility import Visibility
 
 def Test(*args, **kwargs):
@@ -20,6 +22,24 @@ def Test(*args, **kwargs):
         return func
     return inner
 
+def Setup(*args, **kwargs):
+    """
+    This is a decorator which will allow you to add a global setup function. 
+    """
+    def inner(func):
+        AutograderSetup(func, *args, **kwargs)
+        return func
+    return inner
+
+def Teardown(*args, **kwargs):
+    """
+    This is a decorator which will allow you have a global teardown function.
+    """
+    def inner(func):
+        AutograderTeardown(func, *args, **kwargs)
+        return func
+    return inner
+
 __all__ = [
     "Autograder",
     "AutograderError",
@@ -28,5 +48,7 @@ __all__ = [
     "Visibility",
     "Max",
     "global_tests",
-    "Test"
+    "Test",
+    "Setup",
+    "Teardown"
 ]
