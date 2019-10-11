@@ -108,6 +108,8 @@ class Autograder:
         return self.score
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
+        if self.output is None:
+            self.output = ""
         self.output += sep.join(args) + end
 
     def create_test(self, *args, **kwargs):
