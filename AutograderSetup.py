@@ -24,7 +24,7 @@ class AutograderSetup:
         def handler():
             nonlocal success
             success = False
-            print(f"The teardown {self.name} has encountered an error!")
+            print(f"The setup {self.name} has encountered an error!")
             ag.print("[Error]: An unexpected error occured in the Autograder when attempting to run a setup of the Autograder! Please contact a TA if this persists.")
 
         ag.safe_env(f, handler=handler)
