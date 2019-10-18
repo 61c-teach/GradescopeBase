@@ -173,6 +173,8 @@ class Autograder:
         else:
             if isinstance(test_results, list):
                 results["tests"] = test_results
+        if self.score is not None:
+            results["score"] = self.score
         if self.output is not None:
             results["output"] = self.output
         if self.visibility is not None:
