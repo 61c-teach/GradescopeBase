@@ -149,12 +149,14 @@ class Autograder:
         for setup in self.setups:
             if not setup.run(self):
                 self.set_score(0)
+                self.print("An error occurrsed in the setup of the Autograder!")
                 return False
         for test in self.tests:
             test.run(self)
         for teardown in self.teardowns:
             if not teardown.run(self):
                 self.set_score(0)
+                self.print("An error occurred in the teardown of the Autograder!")
                 return False
         return True
 
