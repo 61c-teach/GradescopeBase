@@ -146,17 +146,22 @@ class Autograder:
             return AutograderError()
 
     def run_tests(self):
+        def handle_failed():
+                self.set_score(0)
+                if "sub_counts" in self.extra_data:
+                    print("Since the autograder failed to run, you will not use up a token!")
+                    self.extra_data["sub_counts"] = 0
         for setup in self.setups:
             if not setup.run(self):
-                self.set_score(0)
                 self.print("An error occurrsed in the setup of the Autograder!")
+                handle_failed()
                 return False
         for test in self.tests:
             test.run(self)
         for teardown in self.teardowns:
             if not teardown.run(self):
-                self.set_score(0)
                 self.print("An error occurred in the teardown of the Autograder!")
+                handle_failed()
                 return False
         return True
 
