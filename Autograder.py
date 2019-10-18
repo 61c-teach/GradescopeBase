@@ -262,10 +262,10 @@ class Autograder:
                     if tokens_used < tokens:
                         self.extra_data["sub_counts"] = 1
                         tokens_used += 1 # This is to include the current submission.
-                        self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions."
+                        self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
                     else:
                         self.extra_data["sub_counts"] = 0
-                        self.output = f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission."
+                        self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission.")
                         self.score = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
                         self.generate_results(test_results=metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["results"]["tests"])
                         import sys
