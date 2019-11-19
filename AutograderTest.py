@@ -22,7 +22,9 @@ class AutograderTest:
         extra_data=None,
         kill_autograder_on_error: bool=False,
         do_not_set_score: bool=False,
-        timeout: int=None
+        timeout: int=None,
+        ceil: bool=True,
+        floor: bool=True,
     ):
         """
         The test_fn MUST take in parameters Autograder and AutograderTest in that order.
@@ -40,12 +42,18 @@ class AutograderTest:
         self.kill_autograder_on_error = kill_autograder_on_error
         self.do_not_set_score = do_not_set_score
         self.timeout = timeout
+        self.ceil = ceil
+        self.floor = floor
         global_tests.append(self)
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
         self.output += sep.join(args) + end
 
     def set_score(self, score):
+        if self.ceil and score > self.max_score:
+            score = self.max_score
+        if self.floor and score < 0:
+            score = 0
         self.score = score
 
     def run(self, ag):
