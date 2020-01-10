@@ -183,7 +183,7 @@ class Autograder:
         if self.score is not None:
             results["score"] = self.score
         else:
-            if len(results["tests"]) == 0 or not any(["score" in t for t in results["tests"]]):
+            if "tests" not in results or len(results["tests"]) == 0 or not any(["score" in t for t in results["tests"]]):
                 results["score"] = 0
                 self.print("This autograder does not have any tests which give points!")
         if self.output is not None:
