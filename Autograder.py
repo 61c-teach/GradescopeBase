@@ -8,11 +8,7 @@ import os
 from .AutograderTest import AutograderTest, global_tests, Max
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
-from .Utils import root_dir, submission_dir
-
-results_file = "/autograder/results/results.json"
-if os.path.isfile("/.localhost"):
-    results_file = "./results.json"
+from .Utils import root_dir, submission_dir, results_path
 
 submission_metadata = "/autograder/submission_metadata.json"
 
@@ -42,7 +38,7 @@ class Autograder:
         self.tests = []
         self.setups = []
         self.teardowns = []
-        self.results_file = results_file
+        self.results_file = results_path()
         self.score = None
         self.output = None
         self.visibility = None
