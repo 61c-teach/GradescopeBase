@@ -1,0 +1,8 @@
+<div class="submissionOutline--section">
+    <h3 class="submissionOutline--sectionHeading">{{title}}</h3>
+    <ol>
+        {% for test_name, test_name_and_score in tests %}
+        <li class="submissionOutlineTestCase submissionOutlineTestCase-{{passfail}}"><a href="#{{test_name}}">{{test_name_and_score}}</a></li>
+        {% endfor %}
+    </ol>
+</div>

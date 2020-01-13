@@ -1,7 +1,7 @@
 import os
 
 def is_local() -> bool:
-        return os.path.isfile("/.localhost")
+        return os.environ.get("IS_LOCAL") == "true"
 
 def root_dir() -> str:
         """
@@ -23,5 +23,5 @@ def results_path() -> str:
         This returns the path which the results json should be exported to.
         """
         if is_local():
-                return "./results.json"
+                return "./results/results.json"
         return "/autograder/results/results.json"

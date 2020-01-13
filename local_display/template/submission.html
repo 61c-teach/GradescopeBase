@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Results for LOCAL AUTOGRADER | Gradescope</title>
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/64x64.png" />
+    <script>
+        //<![CDATA[
+        window.gon = {};
+        gon.status = "processed";
+        gon.autograder_queued_at = "2020-01-11T18:57:51.712987-08:00";
+        gon.group_submission = false;
+        gon.submission_json_url = "/assets/results.json";
+        gon.successful_submission = null;
+        //]]>
+    </script>
+    <link rel="stylesheet" media="all" href="/assets/application.css" debug="false" />
+    <script src="/assets/application.js" debug="false"></script>
+    <script src="/assets/manifest.js"></script>
+    <script src="/assets/vendor.js"></script>
+    <script src="/assets/global_components.js"></script>
+    <meta name="csrf-param" content="authenticity_token" />
+    <meta name="csrf-token" content="" />
+    <meta name="pinterest" content="nopin" />
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body data-action="show" data-controller="programming_assignment_submissions">
+    <script type="text/javascript">
+        if (typeof Bugsnag !== 'undefined') {
+            Bugsnag.releaseStage = "production";
+            Bugsnag.notifyReleaseStages = ["staging", "production"];
+            Bugsnag.user = {
+                name: "Local Test",
+                email: "localtest@localhost"
+            };
+        }
+    </script><a class="sr-only sr-only-focusable btn modal--btnPrimary skipLink" href="#main-content">Skip to content</a>
+    <nav class="l-sidebar">
+        <div class="sidebar--content">
+            <div class="sidebar--logoHeader">
+                <div class="logo"><a aria-label="back to home" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="29" height="26" viewBox="0 0 29 26"><g fill-rule="evenodd"><path d="M0 14.763h5.915V25.5H0zM15.057 0h5.915v25.5h-5.915zM7.528 8.589h5.915V25.5H7.528zM22.585 6.174H28.5V25.5h-5.915z"></path></g></svg>
+    <div aria-hidden="true" class="logo--text">gradescope</div></a></div>
+                <div aria-label="toggle sidebar" class="collapseIcon js-toggleSidebar js-interactiveElement"><i aria-hidden="true" class="fa fa-chevron-left collapseIcon--leftArrow"></i><i aria-hidden="true" class="fa fa-bars collapseIcon--hamburger"></i><i aria-hidden="true" class="fa fa-chevron-right collapseIcon--rightArrow"></i></div>
+            </div>
+            <div class="sidebar--collapsedHomeIcon"><a aria-label="back to home" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="29" height="26" viewBox="0 0 29 26"><g fill-rule="evenodd"><path d="M0 14.763h5.915V25.5H0zM15.057 0h5.915v25.5h-5.915zM7.528 8.589h5.915V25.5H7.528zM22.585 6.174H28.5V25.5h-5.915z"></path></g></svg>
+    </a></div>
+            <div class="sidebar--subtitle sidebar--subtitle-truncated"><a href="#"><i class="fa fa-angle-left"></i> Back to COURSE</a></div>
+            <h1 class="sidebar--title" title="{{autograder_title}}">{{autograder_title}}</h1>
+            <ul class="sidebar--menu sidebar--menu-workflow">
+                <li class="sidebar--menuItem complete">
+                    <a aria-label="Configure Autograder" href="#">
+                        <div class="sidebar--menuItemIcon sidebar--menuItemIcon-lg"><i class="fa fa-check-circle"></i></div>
+                        <div class="sidebar--menuItemLabel">Configure Autograder</div>
+                    </a>
+                </li>
+                <li class="sidebar--menuItem complete">
+                    <a aria-label="Manage Submissions" href="#">
+                        <div class="sidebar--menuItemIcon sidebar--menuItemIcon-lg"><i class="fa fa-check-circle"></i></div>
+                        <div class="sidebar--menuItemLabel">Manage Submissions</div>
+                    </a>
+                </li>
+                <li class="sidebar--menuItem">
+                    <a aria-label="Review Grades" href="#">
+                        <div class="sidebar--menuItemIcon sidebar--menuItemIcon-lg"><i class="fa fa-circle-thin"></i></div>
+                        <div class="sidebar--menuItemLabel">Review Grades</div>
+                    </a>
+                </li>
+            </ul>
+            <hr class="sidebar--divider" />
+            <ul class="sidebar--menu">
+                <li class="sidebar--menuItem">
+                    <a href="#">
+                        <div class="sidebar--menuItemIcon">
+                            <div class="fa-stack-container"><span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-rotate-right fa-stack-1x"></i></span></div>
+                        </div>
+                        <div class="sidebar--menuItemLabel">Regrade Requests</div>
+                    </a>
+                </li>
+                <li class="sidebar--menuItem">
+                    <a href="#">
+                        <div class="sidebar--menuItemIcon">
+                            <div class="fa-stack-container"><span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><svg xmlns="http://www.w3.org/2000/svg" width="29" height="26" viewBox="0 0 29 26"><g fill-rule="evenodd"><path d="M0 14.763h5.915V25.5H0zM15.057 0h5.915v25.5h-5.915zM7.528 8.589h5.915V25.5H7.528zM22.585 6.174H28.5V25.5h-5.915z"></path></g></svg>
+    </span></div>
+                        </div>
+                        <div class="sidebar--menuItemLabel">Statistics</div>
+                    </a>
+                </li>
+                <li class="sidebar--menuItem">
+                    <a href="#">
+                        <div class="sidebar--menuItemIcon">
+                            <div class="fa-stack-container"><span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-search fa-stack-1x"></i></span></div>
+                        </div>
+                        <div class="sidebar--menuItemLabel">Review Similarity</div>
+                    </a>
+                </li>
+                <li class="sidebar--menuItem">
+                    <a href="#">
+                        <div class="sidebar--menuItemIcon">
+                            <div class="fa-stack-container"><span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-gear fa-stack-1x"></i></span></div>
+                        </div>
+                        <div class="sidebar--menuItemLabel">Settings</div>
+                    </a>
+                </li>
+            </ul>
+            <div class="modal" data-url="/invites" id="invite-modal">
+                <div class="modal-header">
+                    <h1>Invite fellow instructors to Gradescope</h1>
+                </div>
+                <div class="modal-subtitle"><span class="modal-subtitle-icon"><i class="fa fa-info-circle"></i></span><span class="modal-subtitle-text">Like using Gradescope? Help us spread the word!</span></div>
+                <div class="modal-body">
+                    <form role="form" action="/invites/many" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="" />
+                        <div class="form-group"><label class="form-label" for="Enter_email_addresses">Enter email addresses</label><input type="text" name="email_addresses" id="email_addresses" placeholder="instructor@example.com" class=" form--textInput" /></div><input type="submit"
+                            name="commit" value="Send Invite" disabled="disabled" class="btn btn-primary" id="send-invites" data-disable-with="Send Invite" /></form>
+                    <div id="sent-invites"></div><button name="button" type="submit" class="btn btn-gray close-invite-modal">Close</button></div>
+            </div>
+            <div class="sidebar--userProfileMenuMobile">
+                <h2 class="sidebar--menuHeader">More</h2><a class="sidebar--userProfileMenuMobileLink" href="#"><i aria-hidden="true" class="fa fa-file-text"></i> Getting Started Guide</a><a class="sidebar--userProfileMenuMobileLink js-openHelpCenter" href="/help"><i aria-hidden="true" class="fa fa-question-circle"></i> Help</a>
+                <a class="sidebar--userProfileMenuMobileLink" href="/about"><i aria-hidden="true" class="fa fa-info-circle"></i> About Us</a><a class="sidebar--userProfileMenuMobileLink" href="/account/edit"><i aria-hidden="true" class="fa fa-user"></i> Edit Account</a>
+                <a class="sidebar--userProfileMenuMobileLink" href="/logout"><i aria-hidden="true" class="fa fa-power-off"></i> Log Out</a>
+            </div>
+        </div>
+        <div aria-label="toggle more options" class="sidebar--userProfile">
+            <div aria-hidden="true" class="sidebar--userProfileIcon" role="presentation">
+                <div class="fa-stack-container"><span class="fa-stack fa-lg"><i aria-hidden="true" class="fa fa-circle-thin fa-stack-2x"></i><i aria-hidden="true" class="fa fa-user fa-stack-1x"></i></span></div>
+            </div>
+            <div class="sidebar--userProfileName">Account</div>
+            <div class="sidebar--userProfileMenuToggle"><i aria-label="toggle account menu" class="fa fa-angle-up"></i></div>
+        </div>
+        <div class="modal modal-helpCenter js-helpCenterModal">
+            <div class="js-helpCenter" data-url="/help/contents"></div>
+        </div>
+    </nav>
+    <div class="sidebar--userProfileMenu"><a class="popover--listItem popover--listItem-userProfileMenu" href="#"><i aria-hidden="true" class="fa fa-file-text"></i> Getting Started Guide</a>
+        <a class="popover--listItem popover--listItem-userProfileMenu js-openHelpCenter" href="#"><i aria-hidden="true" class="fa fa-question-circle"></i> Help</a><a class="popover--listItem popover--listItem-userProfileMenu" href="#"><i aria-hidden="true" class="fa fa-info-circle"></i> About Us</a>
+        <a class="popover--listItem popover--listItem-userProfileMenu" href="#"><i aria-hidden="true" class="fa fa-user"></i> Edit Account</a><a class="popover--listItem popover--listItem-userProfileMenu" href="#"><i aria-hidden="true" class="fa fa-power-off"></i> Log Out</a></div>
+    <nav class="l-mobileTopNav">
+        <div aria-expanded="false" aria-label="expand sidebar" class="collapseIcon js-toggleSidebarMobile collapseIcon-is-collapsed js-interactiveElement"><i aria-hidden="true" class="fa fa-chevron-left collapseIcon--leftArrow"></i><i aria-hidden="true" class="fa fa-bars collapseIcon--hamburger"></i><i aria-hidden="true" class="fa fa-chevron-right collapseIcon--rightArrow"></i></div>
+        <div class="logo"><a aria-label="back to home" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="29" height="26" viewBox="0 0 29 26"><g fill-rule="evenodd"><path d="M0 14.763h5.915V25.5H0zM15.057 0h5.915v25.5h-5.915zM7.528 8.589h5.915V25.5H7.528zM22.585 6.174H28.5V25.5h-5.915z"></path></g></svg>
+    <div class="logo--text">gradescope</div></a></div>
+    </nav>
+    <div class="l-mainWrapper">
+        <div class="sidebar--mobileOverlay"></div>
+        <main class="l-main" id="main-content" tabindex="-1">
+            <div class="l-header"></div>
+            <div class="l-contentWrapper l-contentWrapper-mobileReverseOrder">
+                <div class="l-content">
+                    <section class="programmingAssignmentSubmissionViewer">
+                        <div class="programmingAssignmentSubmissionViewer--viewSwitcher btnGroup btnGroup-segmented"><a class="btnv7 btnv7-primary btnGroup--btn btnGroup--btn-is-selected" href="#">Results</a><a class="btnv7 btnv7-primary btnGroup--btn " href="#">Code</a></div>
+                        <h1 class="pageHeading">Autograder Results</h1>
+                        {% if autograder_output %}
+                        <div class="testCase">
+                            <div class="testCase--header" title="only visible to instructors (for debugging purposes)">Autograder Output (hidden from students)</div>
+                            <div class="testCase--body"><pre><div data-react-class="Ansi" data-react-props="{&quot;children&quot;:&quot;{{autograder_output}}&quot;}"></div></pre></div>
+                        </div>
+                        {%endif%} {{test_cases_body|safe}}
+                    </section>
+                    <div class="popover--tooltipContents js-publicKeyTooltip">
+                        <p class="popover--text"><a href="#">Add a public key</a> to your account to enable SSH.</p>
+                    </div>
+                    <div class="popover--tooltipContents js-sessionExistsTooltip">
+                        <p class="popover--text">An SSH session already exists.</p>
+                    </div>
+                    <div class="popover--tooltipContents js-autograderOutdatedTooltip">
+                        <p class="popover--text">Your autograder was not built with SSH support. Please <a href="#">rebuild it</a> to enable SSH.</p>
+                    </div>
+                    <dialog aria-describedby="submit-code-modal-subheading" aria-labelledby="submit-code-modal-heading" aria-modal="true" class="js-submitCodeModal modal" id="submit-code-modal" open="true" role="dialog" tabindex="-1">
+                        <div role="document">
+                            <h1 class="modal--heading" id="submit-code-modal-heading">Submit Programming Assignment</h1>
+                            <div class="modal-subtitle modal--subheading"><span class="modal-subtitle-icon modal--subheadingIcon"><i aria-hidden="true" class="fa fa-info-circle"></i></span><span class="modal-subtitle-text" id="submit-code-modal-subheading">Upload all files for your submission</span></div>
+                            <div class="modal-body modal--body">
+                                <div class="msg msg-warning js-lateSubmissionWarning">This submission will be marked late. Please refer to your course's policy for handling late work.
+                                </div>
+                                <form autocomplete="off" class="form js-submitCodeForm" enctype="multipart/form-data" action="" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="" />
+                                    <div class="js-submissionMethodSwitcher"></div>
+                                    <div class="form--group">
+                                        <div class="fileUploadArea">
+                                            <div aria-label="Select to upload files" class="form-file-drop-area js-interactiveElement">
+                                                <div class="form-file-drop-area-header">Drag & Drop</div>
+                                                <div class="form-file-drop-area-text">Any file(s) including .zip. Click to browse.</div>
+                                            </div>
+                                            <div class="form-file-drop-message">Add files via Drag & Drop or <button class="btn btn-link btn-tealLink form-file-drop-browse" type="button">Browse Files.</button></div>
+                                            <div class="form-file-previews-container">
+                                                <div class="form-file-previews-header">
+                                                    <div class="form-file-preview-filename">Name</div>
+                                                    <div class="form-file-preview-file-size">Size</div>
+                                                    <div class="form-file-preview-file-progress-container-header">Progress</div>
+                                                    <div class="form-file-preview-remove-button-header"><i class="fa fa-times"></i></div>
+                                                </div>
+                                                <div class="form-file-previews"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="js-repositorySelector" data-bitbucket-authentication-path="#" data-bitbucket-is-authenticated="false" data-bitbucket-repositories-url="#" data-github-authentication-path="#" data-github-is-authenticated="" data-github-repositories-url="#"></div>
+                                    <div class="form--group js-leaderboardGroup is-hidden"><label class=" form-label form--label-header" for="submission_leaderboard_name">Leaderboard Name</label><input type="text" name="submission[leaderboard_name]" id="submission_leaderboard_name" placeholder="Provide a name for the leaderboard"
+                                            required="required" class=" form--textInput" /></div>
+                                    <div class="form--group"><label class="form--label form--label-header" for="submission_owner_id">Submitting for</label>
+                                        <p>{{user_name}}</p><input name="submission[owner_id]" type="hidden" value="123456" /></div>
+                                    <div class="btnContainerv7"><button class="btnv7 btnv7-primary js-submitCode" type="submit">Upload</button><button class="btnv7 btnv7-danger js-closeModal" type="button">Cancel</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+                    <div class="hidden" id="dropzone-preview-template">
+                        <div class="form-file-preview">
+                            <div class="form-file-preview-filename"><span data-dz-name=""></span></div>
+                            <div class="form-file-preview-file-size"><span data-dz-size=""></span></div>
+                            <div class="form-file-preview-file-progress-container">
+                                <div data-dz-uploadprogress=""></div>
+                            </div>
+                            <div class="form-file-preview-remove-button"><span data-dz-remove=""><i class="fa fa-times"></i></span></div>
+                            <div class="form-file-preview-error-msg">
+                                <div data-dz-errormessage=""></div>
+                            </div>
+                        </div>
+                    </div>
+                    <dialog aria-labelledby="submission-history-modal-heading" aria-modal="true" class="js-submissionHistoryModal modal modal-withFooter" id="submission-history-modal" open="true" role="dialog" tabindex="-1">
+                        <div role="document">
+                            <h1 class="modal--heading" id="submission-history-modal-heading">Submission History</h1>
+                            <div class="modal-body modal--body">
+                                <table class="table">
+                                    <caption class="sr-only">Submission history</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Submitted At (<abbr title="Pacific Time (US &amp; Canada)">PST</abbr>)</th>
+                                            <th scope="col">Submitters</th>
+                                            <th scope="col">Score</th>
+                                            <th scope="col">Active</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="">1</a></td>
+                                            <td><a href=""><time datetime=""></time></a></td>
+                                            <td>
+                                                <div class="avatarContainer">
+                                                    <div class="avatar" data-name="{{user_name}}">
+                                                        <div class="avatar--text">{{user_initials}}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>0.0</td>
+                                            <td><i aria-label="Active Submission" class="fa fa-check"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal--footer modal--footer-closeButton js-closeModal js-interactiveElement"><span aria-hidden="true" class="fa-stack modal--footerIcon"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-times fa-stack-1x"></i></span><span class="text modal--footerText">Close</span></div>
+                        </div>
+                    </dialog>
+                    <div class="js-regradeRequestModal"></div>
+                </div>
+                <div class="l-rightSidebar l-rightSidebar-full l-rightSidebar-outline">
+                    <div class="submissionOutline">
+                        <div class="submissionOutline--section">
+                            <div class="submissionOutline--sectionHeading">Student</div>
+                            <ul>
+                                <li class="submissionOutlineHeader--groupMember">{{name}}</li>
+                            </ul>
+                        </div>
+                        <div class="submissionOutline--section">
+                            <h2 class="submissionOutline--sectionHeading">Autograder Score</h2>
+                            <div class="submissionOutlineHeader--totalPoints">{{score}} / {{out_of}}</div>
+                        </div>
+                        {{test_cases_sidebar|safe}}
+                    </div>
+                </div>
+            </div>
+            <section class="l-actionBar" role="toolbar" aria-label="action bar">
+                <ul class="actionBar--actionList">
+                    <li class="actionBar--collapsedMenuButtonContainer"><button name="button" type="submit" class="actionBar--action js-toggleActionBarCollapsedMenu"><i class="fa fa-angle-up"></i> More</button>
+                        <div class="actionBar--collapsedMenuContent popover--tooltipContents tooltip-content">
+                            <ul></ul>
+                        </div>
+                    </li>
+                    <li>
+                        <form class="button_to" method="post" action=""><button class="actionBar--action" type="submit"><i class="fa fa-repeat"></i> Rerun Autograder</button><input type="hidden" name="authenticity_token" value="" /></form>
+                    </li>
+                    <li>
+                        <form class="button_to" method="post" action=""><button class="actionBar--action js-rerunAutograderWithSSH" aria-disabled="false" type="submit"><i class="fa fa-terminal"></i> Debug via SSH</button><input type="hidden" name="authenticity_token" value="" /></form>
+                    </li>
+                    <li><button class="js-showSubmissionHistory actionBar--action" type="button"><i class="fa fa-clock-o"></i> Submission History</button></li>
+                    <li><a class="actionBar--action" href=""><i class="fa fa-download"></i> Download Submission</a></li>
+                    <li><button name="button" type="button" class="actionBar--action actionBar--action-next js-submitAssignment" data-post-url="" data-submission-format="code" data-show-late-submission-warning="false" data-submission-methods="{&quot;upload&quot;:true,&quot;github&quot;:true,&quot;bitbucket&quot;:true}"
+                            data-leaderboard-enabled="false"><i class="fa fa-upload"></i> Resubmit</button></li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    <script src="assets/submission_viewer.js"></script>
+</body>
+
+</html>
