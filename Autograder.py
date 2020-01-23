@@ -149,7 +149,7 @@ class Autograder:
                     self.extra_data["sub_counts"] = 0
         for setup in self.setups:
             if not setup.run(self):
-                self.print("An error occurrsed in the setup of the Autograder!")
+                self.print("An error occurred in the setup of the Autograder!")
                 handle_failed()
                 return False
         for test in self.tests:
