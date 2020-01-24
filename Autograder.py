@@ -1,4 +1,12 @@
 """
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 20:57:36 
+ * @Last Modified by:   ThaumicMekanism [Stephan K.] 
+ * @Last Modified time: 2020-01-23 20:57:36 
+ */
+"""
+"""
 This is the base of the autograder.
 """
 import json

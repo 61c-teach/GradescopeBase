@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 21:03:47 
+ * @Last Modified by:   ThaumicMekanism [Stephan K.] 
+ * @Last Modified time: 2020-01-23 21:03:47 
+ */
+"""
 import signal
 
 class Timeout():

@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 20:56:59 
+ * @Last Modified by: ThaumicMekanism [Stephan K.]
+ * @Last Modified time: 2020-01-23 21:00:23
+ */
+"""
 from flask import Flask, request, send_from_directory, render_template
 import argparse
 import json

@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 21:02:51 
+ * @Last Modified by:   ThaumicMekanism [Stephan K.] 
+ * @Last Modified time: 2020-01-23 21:02:51 
+ */
+"""
 from .Timeout import Timeout
 
 global_teardowns = []

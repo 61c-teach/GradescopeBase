@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 20:56:28 
+ * @Last Modified by:   ThaumicMekanism [Stephan K.] 
+ * @Last Modified time: 2020-01-23 20:56:28 
+ */
+ """
 from .Autograder import Autograder, AutograderError, RateLimit
 from .AutograderTest import AutograderTest, Max, global_tests
 from .AutograderSetup import AutograderSetup

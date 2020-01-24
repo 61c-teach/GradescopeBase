@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 21:03:57 
+ * @Last Modified by:   ThaumicMekanism [Stephan K.] 
+ * @Last Modified time: 2020-01-23 21:03:57 
+ */
+"""
 import os
 
 def is_local() -> bool:

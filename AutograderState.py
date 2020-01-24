@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 21:01:33 
+ * @Last Modified by: ThaumicMekanism [Stephan K.]
+ * @Last Modified time: 2020-01-23 21:02:27
+ */
+ """
 from . import Autograder, AutograderTest, AutograderSubTest
 
 class AutograderState:

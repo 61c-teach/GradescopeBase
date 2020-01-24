@@ -1,3 +1,11 @@
+"""
+/*
+ * @Author: ThaumicMekanism [Stephan K.] 
+ * @Date: 2020-01-23 20:56:43 
+ * @Last Modified by: ThaumicMekanism [Stephan K.]
+ * @Last Modified time: 2020-01-23 21:00:55
+ */
+"""
 from .Timeout import Timeout
 
 global_setups = []
