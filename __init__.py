@@ -2,14 +2,16 @@
 /*
  * @Author: ThaumicMekanism [Stephan K.] 
  * @Date: 2020-01-23 20:56:28 
- * @Last Modified by:   ThaumicMekanism [Stephan K.] 
- * @Last Modified time: 2020-01-23 20:56:28 
+ * @Last Modified by: ThaumicMekanism [Stephan K.]
+ * @Last Modified time: 2020-01-30 16:13:26
  */
  """
-from .Autograder import Autograder, AutograderError, RateLimit
+from .Autograder import Autograder, RateLimit
 from .AutograderTest import AutograderTest, Max, global_tests
 from .AutograderSetup import AutograderSetup
 from .AutograderTeardown import AutograderTeardown
+from .AutograderSubTest import AutograderSubTest, SubTestRunner
+from .AutograderErrors import AutograderBaseError, AutograderFormatError, AutograderSafeEnvError
 from .Visibility import Visibility
 
 def Test(*args, **kwargs):
@@ -48,9 +50,17 @@ def Teardown(*args, **kwargs):
         return func
     return inner
 
+def SubTest(test: AutograderTest, *args, **kwargs):
+    """
+    This decorator will create a subtest out of a function.
+    """
+    def inner(func):
+        AutograderSubTest(test, func, *args, **kwargs)
+        return func
+    return inner
+
 __all__ = [
     "Autograder",
-    "AutograderError",
     "RateLimit",
     "AutograderTest",
     "Visibility",
@@ -58,5 +68,11 @@ __all__ = [
     "global_tests",
     "Test",
     "Setup",
-    "Teardown"
+    "Teardown",
+    "AutograderSubTest",
+    "SubTest",
+    "SubTestRunner",
+    "AutograderBaseError", 
+    "AutograderFormatError", 
+    "AutograderSafeEnvError"
 ]

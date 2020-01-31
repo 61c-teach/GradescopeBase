@@ -2,8 +2,8 @@
 /*
  * @Author: ThaumicMekanism [Stephan K.] 
  * @Date: 2020-01-23 20:57:36 
- * @Last Modified by:   ThaumicMekanism [Stephan K.] 
- * @Last Modified time: 2020-01-23 20:57:36 
+ * @Last Modified by: ThaumicMekanism [Stephan K.]
+ * @Last Modified time: 2020-01-30 16:26:37
  */
 """
 """
@@ -14,15 +14,14 @@ import time
 import datetime
 import os
 from .AutograderTest import AutograderTest, global_tests, Max
+from .AutograderErrors import AutograderSafeEnvError
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
-from .Utils import root_dir, submission_dir, results_path
+from .Utils import root_dir, submission_dir, results_path, get_welcome_message
 
 submission_metadata = "/autograder/submission_metadata.json"
 
-class AutograderError(Exception):
-    def __init__(self, info: any=None):
-        self.info = info
+printed_welcome_message = False
 
 class RateLimit:
     def __init__(
@@ -62,6 +61,10 @@ class Autograder:
 
     @staticmethod
     def run(ag = None):
+        global printed_welcome_message
+        if not printed_welcome_message:
+            printed_welcome_message = True
+            print(get_welcome_message())
         def f(ag):
             for t in global_tests:
                 ag.add_test(t)
@@ -74,6 +77,10 @@ class Autograder:
 
     @staticmethod
     def main(f, ag=None):
+        global printed_welcome_message
+        if not printed_welcome_message:
+            printed_welcome_message = True
+            print(get_welcome_message())
         if ag is None:
             ag = Autograder()
         def handler():
@@ -143,13 +150,18 @@ class Autograder:
                 try:
                     h = handler()
                     if h:
-                        return AutograderError(h)
+                        return AutograderSafeEnvError(h)
                 except Exception as exc:
                     print("An exception occured while executing the exception handler!")
+                    traceback.print_exc()
             self.ag_fail("An unexpected exception ocurred while trying to execute the autograder. Please try again or contact a TA if this persists.")
-            return AutograderError()
+            return AutograderSafeEnvError(exc)
 
     def run_tests(self):
+        global printed_welcome_message
+        if not printed_welcome_message:
+            printed_welcome_message = True
+            print(get_welcome_message())
         def handle_failed():
                 self.set_score(0)
                 if "sub_counts" in self.extra_data:
@@ -205,6 +217,10 @@ class Autograder:
         return results
         
     def execute(self):
+        global printed_welcome_message
+        if not printed_welcome_message:
+            printed_welcome_message = True
+            print(get_welcome_message())
         self.rate_limit_main()
         if not self.run_tests():
             print("An error has occured when attempting to run all tests.")
