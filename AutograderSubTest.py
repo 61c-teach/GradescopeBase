@@ -91,7 +91,7 @@ class SubTestRunner(object):
         is_pass_fail: bool=True,
         pass_fail_ratio: float=1,
     ):
-        self.separator_count = 20
+        self.separator_count = 40
         self.is_pass_fail = is_pass_fail
         self.pass_fail_ratio = pass_fail_ratio
 
