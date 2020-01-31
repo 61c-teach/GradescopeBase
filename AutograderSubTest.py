@@ -164,16 +164,27 @@ class SubTestRunner(object):
     def run_test(self, ag, test, t, data):
         t.run(ag)
 
+    def part_stopped(self, id: str, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data: dict):
+        return
+
     def __call__(self, ag: Autograder, test: AutograderTest):
         data = {
             "score": 0,
             "passed": [],
         }
         sub_test = self.get_sub_tests(ag, test, data)
-        self.pre_test_run(ag, test, data)
+        if sub_test is False:
+            return self.part_stopped("get_sub_tests", ag, test, None, data)
+        if self.pre_test_run(ag, test, data) is False:
+            return self.part_stopped("pre_test_run", ag, test, None, data)
         for t in sub_test:
-            self.pre_subtest_run(ag, test, t, data)
-            self.run_test(ag, test, t, data)
-            self.post_subtest_run(ag, test, t, data)
-        self.score_post(ag, test, data)
-        self.post_test_run(ag, test, data)
+            if self.pre_subtest_run(ag, test, t, data) is False:
+                return self.part_stopped("pre_subtest_run", ag, test, t, data)
+            if self.run_test(ag, test, t, data) is False:
+                return self.part_stopped("run_test", ag, test, t, data)
+            if self.post_subtest_run(ag, test, t, data) is False:
+                return self.part_stopped("post_subtest_run", ag, test, t, data)
+        if self.score_post(ag, test, data) is False:
+            return self.part_stopped("score_post", ag, test, None, data)
+        if self.post_test_run(ag, test, data) is False:
+            return self.part_stopped("post_test_run", ag, test, None, data)
