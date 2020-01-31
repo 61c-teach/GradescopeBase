@@ -144,7 +144,7 @@ class SubTestRunner(object):
         else:
             test.print(f"{score} / {t.max_score}")
         test.print("_" * self.separator_count)
-        test.print()
+        test.print("\n")
 
     def increment_score(self, data, score):
         data["score"] += score
