@@ -84,6 +84,9 @@ class AutograderSubTest(AutograderTest):
             return 0
         return score
 
+class StopSubTestRunner(object):
+    def __init__(self, info=""):
+        self.info = info
         
 class SubTestRunner(object):
     def __init__(
@@ -164,27 +167,47 @@ class SubTestRunner(object):
     def run_test(self, ag, test, t, data):
         t.run(ag)
 
-    def part_stopped(self, id: str, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data: dict):
-        return
+    def part_stopped(self, idx: str, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data: dict):
+        test.print("[Warning]: This test stopped early!")
+        return StopSubTestRunner(idx)
 
     def __call__(self, ag: Autograder, test: AutograderTest):
+        r = self.runner(ag, test)
+        if isinstance(r, StopSubTestRunner):
+            print(f"The subtest runner stopped on {r.info}!")
+
+    def runner(self, ag: Autograder, test: AutograderTest):
         data = {
             "score": 0,
             "passed": [],
         }
         sub_test = self.get_sub_tests(ag, test, data)
         if sub_test is False:
-            return self.part_stopped("get_sub_tests", ag, test, None, data)
+            r = self.part_stopped("get_sub_tests", ag, test, None, data)
+            if isinstance(r, StopSubTestRunner):
+                return r
         if self.pre_test_run(ag, test, data) is False:
-            return self.part_stopped("pre_test_run", ag, test, None, data)
+            r = self.part_stopped("pre_test_run", ag, test, None, data)
+            if isinstance(r, StopSubTestRunner):
+                return r
         for t in sub_test:
             if self.pre_subtest_run(ag, test, t, data) is False:
-                return self.part_stopped("pre_subtest_run", ag, test, t, data)
+                r = self.part_stopped("pre_subtest_run", ag, test, t, data)
+                if isinstance(r, StopSubTestRunner):
+                    return r
             if self.run_test(ag, test, t, data) is False:
-                return self.part_stopped("run_test", ag, test, t, data)
+                r = self.part_stopped("run_test", ag, test, t, data)
+                if isinstance(r, StopSubTestRunner):
+                    return r
             if self.post_subtest_run(ag, test, t, data) is False:
-                return self.part_stopped("post_subtest_run", ag, test, t, data)
+                r = self.part_stopped("post_subtest_run", ag, test, t, data)
+                if isinstance(r, StopSubTestRunner):
+                    return r
         if self.score_post(ag, test, data) is False:
-            return self.part_stopped("score_post", ag, test, None, data)
+            r = self.part_stopped("score_post", ag, test, None, data)
+            if isinstance(r, StopSubTestRunner):
+                return r
         if self.post_test_run(ag, test, data) is False:
-            return self.part_stopped("post_test_run", ag, test, None, data)
+            r = self.part_stopped("post_test_run", ag, test, None, data)
+            if isinstance(r, StopSubTestRunner):
+                return r
