@@ -127,7 +127,7 @@ class SubTestRunner(object):
     def pre_subtest_run(self, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data):
         test.print("=" * self.separator_count)
         test.print(f"[SubTest]: {t.name}")
-        test.print("_" * self.separator_count)
+        test.print("-" * self.separator_count)
 
     def post_subtest_run(self, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data):
         passed = t.passed()
@@ -135,7 +135,7 @@ class SubTestRunner(object):
         self.increment_score(data, score)
         self.add_test_passed_status(data, passed)
         test.print(t.output)
-        test.print("_" * self.separator_count)
+        test.print("-" * self.separator_count)
         if self.is_pass_fail:
             msg = "FAILED"
             if passed:
@@ -143,7 +143,7 @@ class SubTestRunner(object):
             test.print(msg)
         else:
             test.print(f"{score} / {t.max_score}")
-        test.print("-" * self.separator_count)
+        test.print("_" * self.separator_count)
         test.print()
 
     def increment_score(self, data, score):
