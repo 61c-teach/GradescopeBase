@@ -41,7 +41,7 @@ class RateLimit:
         self.reset_time = reset_time
 
 class Autograder:
-    def __init__(self, rate_limit=None, reverse_tests=False):
+    def __init__(self, rate_limit=None, reverse_tests=False, export_tests_after_test=True):
         self.tests = []
         self.setups = []
         self.teardowns = []
@@ -53,6 +53,7 @@ class Autograder:
         self.extra_data = {}
         self.leaderboard = None
         self.reverse_tests = reverse_tests
+        self.export_tests_after_test = export_tests_after_test
         # rate_limit takes in a RateLimit class.
         # reset_time is when you want to reset the submission time. You
         # can leave it out to ignore. Put the time stirng in this format:
@@ -175,6 +176,8 @@ class Autograder:
                 return False
         for test in self.tests:
             test.run(self)
+            if self.export_tests_after_test:
+                self.generate_results()
         for teardown in self.teardowns:
             if not teardown.run(self):
                 self.print("An error occurred in the teardown of the Autograder!")

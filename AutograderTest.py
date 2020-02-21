@@ -35,6 +35,7 @@ class AutograderTest:
         timeout: int=None,
         ceil: bool=True,
         floor: bool=True,
+        ran: bool=False,
     ):
         """
         The test_fn MUST take in parameters Autograder and AutograderTest in that order.
@@ -54,6 +55,7 @@ class AutograderTest:
         self.timeout = timeout
         self.ceil = ceil
         self.floor = floor
+        self.ran = ran
         global_tests.append(self)
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
@@ -81,6 +83,7 @@ class AutograderTest:
         self.score = None
 
     def run(self, ag):
+        self.ran = True
         if self.test_fn is None:
             self.print("[ERROR]: This test case does not have a callable function!")
             self.set_score(0)
@@ -111,7 +114,10 @@ class AutograderTest:
         ag.safe_env(f, handler=handler)
 
     def get_results(self):
-        data = {"output": self.output}
+        o = self.output
+        if self.ran is False:
+            o = "[WARNING]: This test has not run yet!"
+        data = {"output": o}
         if self.max_score is not None:
             data["max_score"] = self.max_score
         if self.name is not None:
