@@ -70,9 +70,9 @@ class AutograderTest:
             score = 0
         if isinstance(score, Max) and self.max_score is not None:
             score = self.max_score
-        if self.score is None:
-            self.score = score
-            return
+        # if self.score is None:
+        #     self.score = score
+        #     return
         if self.ceil and score > self.max_score:
             score = self.max_score
         if self.floor and score < 0:
