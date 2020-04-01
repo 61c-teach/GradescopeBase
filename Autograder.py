@@ -305,8 +305,18 @@ class Autograder:
                     else:
                         self.extra_data["sub_counts"] = 0
                         self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission.")
-                        self.score = metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["score"]
-                        self.generate_results(test_results=metadata["previous_submissions"][len(metadata["previous_submissions"]) - 1]["results"]["tests"])
+                        
+                        prev_subs = metadata["previous_submissions"]
+                        prev_sub = prev_subs[len(prev_subs) - 1]
+                        res = prev_sub.get("results")
+                        if res is None or "tests" not in res:
+                            self.print("Could not pull the data from your previous submission! This is probably due to it not have been complete!")
+                            tests = []
+                            self.set_score(0)
+                        else:
+                            tests = res["tests"]
+                            self.set_score(prev_subs.get("score"))
+                        self.generate_results(test_results=tests)
                         import sys
                         sys.exit()
 
