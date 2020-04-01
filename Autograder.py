@@ -308,12 +308,12 @@ class Autograder:
                         
                         prev_subs = metadata["previous_submissions"]
                         prev_sub = prev_subs[len(prev_subs) - 1]
-                        res = prev_sub.get("results")
-                        if res is None or "tests" not in res:
+                        if "results" not in prev_sub or "tests" not in prev_sub["results"]:
                             self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
                             tests = []
                             self.set_score(0)
                         else:
+                            res = prev_sub["results"]
                             tests = res["tests"]
                             self.set_score(prev_subs.get("score"))
                         self.generate_results(test_results=tests)
