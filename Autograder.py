@@ -310,7 +310,7 @@ class Autograder:
                         prev_sub = prev_subs[len(prev_subs) - 1]
                         res = prev_sub.get("results")
                         if res is None or "tests" not in res:
-                            self.print("Could not pull the data from your previous submission! This is probably due to it not have been complete!")
+                            self.print("Could not pull the data from your previous submission! This is probably due to it not have finished running!")
                             tests = []
                             self.set_score(0)
                         else:
