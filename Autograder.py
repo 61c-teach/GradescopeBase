@@ -315,7 +315,7 @@ class Autograder:
                         else:
                             res = prev_sub["results"]
                             tests = res["tests"]
-                            self.set_score(prev_subs.get("score"))
+                            self.set_score(prev_sub.get("score"))
                         self.generate_results(test_results=tests)
                         import sys
                         sys.exit()
