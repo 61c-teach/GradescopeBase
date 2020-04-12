@@ -41,7 +41,7 @@ class RateLimit:
         self.reset_time = reset_time
 
 class Autograder:
-    def __init__(self, rate_limit=None, reverse_tests=False, export_tests_after_test=True):
+    def __init__(self, rate_limit=None, reverse_tests=False, export_tests_after_test=True, modify_results=lambda results: results):
         self.tests = []
         self.setups = []
         self.teardowns = []
@@ -60,6 +60,7 @@ class Autograder:
         #  "2018-11-29T16:15:00"
         self.rate_limit:RateLimit = rate_limit
         self.start_time = datetime.datetime.now()
+        self.modify_results = modify_results
 
     @staticmethod
     def run(ag = None):
@@ -220,6 +221,7 @@ class Autograder:
             results["extra_data"] = self.extra_data
         if self.leaderboard is not None:
             results["leaderboard"] = self.leaderboard
+        results = self.modify_results(results)
         if dump:
             self.dump_results(results)
         return results
