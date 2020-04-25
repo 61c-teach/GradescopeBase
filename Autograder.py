@@ -3,7 +3,7 @@
  * @Author: ThaumicMekanism [Stephan K.] 
  * @Date: 2020-01-23 20:57:36 
  * @Last Modified by: ThaumicMekanism [Stephan K.]
- * @Last Modified time: 2020-01-30 16:26:37
+ * @Last Modified time: 2020-04-25 14:03:18
  */
 """
 """
@@ -243,6 +243,37 @@ class Autograder:
     @staticmethod
     def submission_dir() -> str:
         return submission_dir()
+
+    def add_leaderboard_item(self, name: str, value: any, order: str=None):
+        if self.leaderboard is None:
+            self.leaderboard = []
+        for item in self.leaderboard:
+            if item["name"] == name:
+                item["value"] = value
+                if order is not None:
+                    item["order"] = order
+                break
+        else:
+            item = {
+                "name": name,
+                "value": value
+            }
+            if order is not None:
+                item["order"] = order
+            self.leaderboard.append(item)
+    
+    def get_leaderboard_item(self, name: str):
+        for item in self.leaderboard:
+            if item["name"] == name:
+                return item
+        return None
+    
+    def remove_leaderboard_item(self, name: str):
+        item = self.get_leaderboard_item(name)
+        if item:
+            self.leaderboard.remove(item)
+            return True
+        return False
     
     def rate_limit_main(self):
         if isinstance(self.rate_limit, RateLimit) and self.rate_limit.tokens is not None:
