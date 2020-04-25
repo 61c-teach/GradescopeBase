@@ -3,7 +3,7 @@
  * @Author: ThaumicMekanism [Stephan K.] 
  * @Date: 2020-01-23 20:57:36 
  * @Last Modified by: ThaumicMekanism [Stephan K.]
- * @Last Modified time: 2020-04-25 14:03:18
+ * @Last Modified time: 2020-04-25 14:56:44
  */
 """
 """
@@ -186,7 +186,7 @@ class Autograder:
                 return False
         return True
 
-    def generate_results(self, test_results=None, dump=True):
+    def generate_results(self, test_results=None, leaderboard=None, dump=True):
         results = {
             "execution_time": (datetime.datetime.now() - self.start_time).total_seconds(),
         }
@@ -219,8 +219,11 @@ class Autograder:
             results["stdout_visibility"] = self.stdout_visibility
         if self.extra_data:
             results["extra_data"] = self.extra_data
-        if self.leaderboard is not None:
-            results["leaderboard"] = self.leaderboard
+        if leaderboard:
+            results["leaderboard"] = leaderboard
+        else:
+            if self.leaderboard is not None:
+                results["leaderboard"] = self.leaderboard
         results = self.modify_results(results)
         if dump:
             self.dump_results(results)
@@ -348,8 +351,9 @@ class Autograder:
                         else:
                             res = prev_sub["results"]
                             tests = res["tests"]
+                            leaderboard = res["leaderboard"]
                             self.set_score(prev_sub.get("score"))
-                        self.generate_results(test_results=tests)
+                        self.generate_results(test_results=tests, leaderboard=leaderboard)
                         import sys
                         sys.exit()
 
