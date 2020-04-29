@@ -7,14 +7,16 @@
  */
 """
 from .Timeout import Timeout
+from Utils import WhenToRun
 
 global_setups = []
 
 class AutograderSetup:
-    def __init__(self, setupfn, name, timeout: int=None):
+    def __init__(self, setupfn, name, timeout: int=None, when_to_run: WhenToRun=WhenToRun.BOTH):
         self.setupfn = setupfn
         self.name = name
         self.timeout = timeout
+        self.when_to_run = when_to_run
         global_setups.append(self)
 
     def run(self, ag: "Autograder"):

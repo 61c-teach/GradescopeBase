@@ -7,14 +7,16 @@
  */
 """
 from .Timeout import Timeout
+from Utils import WhenToRun
 
 global_teardowns = []
 
 class AutograderTeardown:
-    def __init__(self, teardownfn, name, timeout: int=None):
+    def __init__(self, teardownfn, name, timeout: int=None, when_to_run: WhenToRun=WhenToRun.BOTH):
         self.teardownfn = teardownfn
         self.name = name
         self.timeout = timeout
+        self.when_to_run = when_to_run
         global_teardowns.append(self)
 
     def run(self, ag: "Autograder"):

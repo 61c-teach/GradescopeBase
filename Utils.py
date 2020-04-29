@@ -7,9 +7,10 @@
  */
 """
 import os
+import enum
 from distutils.version import LooseVersion
 
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 
 def get_welcome_message():
     return f"Thank you for using GradescopeBase v{VERSION} created by ThaumicMekanism [Stephan K.]!"
@@ -75,3 +76,18 @@ def merge(a, b, path=None):
         else:
             a[key] = b[key]
     return a
+
+class WhenToRun(enum.Enum):
+    NEITHER = 0
+    LOCAL = 1
+    GRADESCOPE = 2
+    BOTH = 3
+    
+    def okay_to_run(self, state: bool=None) -> bool:
+        if state is None:
+            state = is_local()
+        if self is self.NEITHER:
+            return False
+        if self is self.BOTH:
+            return True
+        return (state and self is self.LOCAL) or (not state and self is self.GRADESCOPE)

@@ -17,7 +17,7 @@ from .AutograderTest import AutograderTest, global_tests, Max
 from .AutograderErrors import AutograderSafeEnvError
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
-from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local
+from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun
 
 submission_metadata = "/autograder/submission_metadata.json"
 
@@ -167,12 +167,15 @@ class Autograder:
         if not printed_welcome_message:
             printed_welcome_message = True
             print(get_welcome_message())
+        local = is_local()
         def handle_failed():
                 self.set_score(0)
                 if "sub_counts" in self.extra_data:
                     self.print("Since the autograder failed to run, you will not use up a token!")
                     self.extra_data["sub_counts"] = 0
         for setup in self.setups:
+            if not setup.when_to_run.okay_to_run(local):
+                continue
             if not setup.run(self):
                 self.print("An error occurred in the setup of the Autograder!")
                 handle_failed()
@@ -182,6 +185,8 @@ class Autograder:
             if self.export_tests_after_test:
                 self.generate_results()
         for teardown in self.teardowns:
+            if not teardown.when_to_run.okay_to_run(local):
+                continue
             if not teardown.run(self):
                 self.print("An error occurred in the teardown of the Autograder!")
                 handle_failed()
