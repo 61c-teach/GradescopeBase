@@ -285,7 +285,7 @@ class Autograder:
             return True
         return False
     
-    def rate_limit_main(self):
+    def rate_limit_main(self, verbose=False):
         if is_local() and not self.use_ratelimit_when_local:
             print("[WARNING]: Rate limit is enabled but will not be checked because this has been detected to be a local run!")
             return
@@ -322,28 +322,34 @@ class Autograder:
             current_time = time.strptime(current_subm_string,"%Y-%m-%dT%H:%M:%S")
             restart_time = time.strptime(restart_subm_string, "%Y-%m-%dT%H:%M:%S") if restart_subm_string is not None else None
             tokens_used = 0
-            print("=" * 30)
+            if verbose:
+                print("=" * 30)
             for i, v in enumerate(metadata["previous_submissions"]):
                 subm_string = get_submission_time(v["submission_time"])
                 subm_time = time.strptime(subm_string,"%Y-%m-%dT%H:%M:%S")
                 if restart_time is not None and time.mktime(subm_time) - time.mktime(restart_time) < 0:
-                    print("Ignoring a submission, too early!")
+                    if verbose:
+                        print("Ignoring a submission, too early!")
                     continue
-                print("Current time: " + str(time.mktime(current_time)))
-                print("Subm time: " + str(time.mktime(subm_time)))
+                if verbose:
+                    print("Current time: " + str(time.mktime(current_time)))
+                    print("Subm time: " + str(time.mktime(subm_time)))
                 if (time.mktime(current_time) - time.mktime(subm_time) < regen_time_seconds): 
                     try:
-                        print(metadata["previous_submissions"][i])
-                        print("Tokens used: " + str(tokens_used))
-                        print(str(metadata["previous_submissions"][i].keys()))
-                        print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
+                        if verbose:
+                            print(metadata["previous_submissions"][i])
+                            print("Tokens used: " + str(tokens_used))
+                            print(str(metadata["previous_submissions"][i].keys()))
+                            print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
                         if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1): 
                             tokens_used = tokens_used + 1
                     except: 
                         tokens_used = tokens_used + 1
                         pass
-                print("-" * 30)
-            print("=" * 30)
+                if verbose:
+                    print("-" * 30)
+            if verbose:
+                print("=" * 30)
             if tokens_used < tokens:
                 self.extra_data["sub_counts"] = 1
                 tokens_used += 1 # This is to include the current submission.
