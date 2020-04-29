@@ -7,7 +7,7 @@
  */
 """
 from .Timeout import Timeout
-from Utils import WhenToRun
+from .Utils import WhenToRun
 
 global_setups = []
 
