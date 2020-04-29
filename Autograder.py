@@ -17,7 +17,7 @@ from .AutograderTest import AutograderTest, global_tests, Max
 from .AutograderErrors import AutograderSafeEnvError
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
-from .Utils import root_dir, submission_dir, results_path, get_welcome_message
+from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local
 
 submission_metadata = "/autograder/submission_metadata.json"
 
@@ -41,6 +41,8 @@ class RateLimit:
         self.reset_time = reset_time
 
 class Autograder:
+    use_ratelimit_when_local = False
+
     def __init__(self, rate_limit=None, reverse_tests=False, export_tests_after_test=True, modify_results=lambda results: results):
         self.tests = []
         self.setups = []
@@ -279,83 +281,86 @@ class Autograder:
         return False
     
     def rate_limit_main(self):
+        if is_local() and not self.use_ratelimit_when_local:
+            print("[WARNING]: Rate limit is enabled but will not be checked because this has been detected to be a local run!")
+            return
         if isinstance(self.rate_limit, RateLimit) and self.rate_limit.tokens is not None:
-                    tokens = self.rate_limit.tokens
-                    restart_subm_string = self.rate_limit.reset_time
-                    s = self.rate_limit.seconds
-                    m = self.rate_limit.minutes
-                    h = self.rate_limit.hours
-                    d = self.rate_limit.days
-                    regen_time_seconds = s + 60 * (m + 60 * (h + (24 * d)))
-                    def get_submission_time(s):
-                        return s[:-13]
-                    def pretty_time_str(s, m, h, d):
-                        sstr = "" if s == 0 else str(s) + " second"
-                        sstr += "" if sstr == "" or s == 1 else "s"
-                        mstr = "" if m == 0 else str(m) + " minute"
-                        mstr += "" if mstr == "" or m == 1 else "s"
-                        hstr = "" if h == 0 else str(h) + " hour"
-                        hstr += "" if hstr == "" or h == 1 else "s"
-                        dstr = "" if d == 0 else str(d) + " day"
-                        dstr += "" if dstr == "" or d == 1 else "s"
-                        st = dstr
-                        for tmpstr in [hstr, mstr, sstr]:
-                            if st != "" and tmpstr != "":
-                                st += " "
-                            st += tmpstr
-                        if st == "":
-                            st = "none"
-                        return st
-                    with open(submission_metadata, "r") as jsonMetadata:
-                        metadata = json.load(jsonMetadata)
-                    current_subm_string = get_submission_time(metadata["created_at"])
-                    current_time = time.strptime(current_subm_string,"%Y-%m-%dT%H:%M:%S")
-                    restart_time = time.strptime(restart_subm_string, "%Y-%m-%dT%H:%M:%S") if restart_subm_string is not None else None
-                    tokens_used = 0
-                    print("=" * 30)
-                    for i, v in enumerate(metadata["previous_submissions"]):
-                        subm_string = get_submission_time(v["submission_time"])
-                        subm_time = time.strptime(subm_string,"%Y-%m-%dT%H:%M:%S")
-                        if restart_time is not None and time.mktime(subm_time) - time.mktime(restart_time) < 0:
-                            print("Ignoring a submission, too early!")
-                            continue
-                        print("Current time: " + str(time.mktime(current_time)))
-                        print("Subm time: " + str(time.mktime(subm_time)))
-                        if (time.mktime(current_time) - time.mktime(subm_time) < regen_time_seconds): 
-                            try:
-                                print(metadata["previous_submissions"][i])
-                                print("Tokens used: " + str(tokens_used))
-                                print(str(metadata["previous_submissions"][i].keys()))
-                                print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
-                                if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1): 
-                                    tokens_used = tokens_used + 1
-                            except: 
-                                tokens_used = tokens_used + 1
-                                pass
-                        print("-" * 30)
-                    print("=" * 30)
-                    if tokens_used < tokens:
-                        self.extra_data["sub_counts"] = 1
-                        tokens_used += 1 # This is to include the current submission.
-                        self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
-                    else:
-                        self.extra_data["sub_counts"] = 0
-                        self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission.")
-                        
-                        prev_subs = metadata["previous_submissions"]
-                        prev_sub = prev_subs[len(prev_subs) - 1]
-                        if "results" not in prev_sub or "tests" not in prev_sub["results"]:
-                            self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
-                            tests = []
-                            self.set_score(0)
-                        else:
-                            res = prev_sub["results"]
-                            tests = res["tests"]
-                            leaderboard = res["leaderboard"]
-                            self.set_score(prev_sub.get("score"))
-                        self.generate_results(test_results=tests, leaderboard=leaderboard)
-                        import sys
-                        sys.exit()
+            tokens = self.rate_limit.tokens
+            restart_subm_string = self.rate_limit.reset_time
+            s = self.rate_limit.seconds
+            m = self.rate_limit.minutes
+            h = self.rate_limit.hours
+            d = self.rate_limit.days
+            regen_time_seconds = s + 60 * (m + 60 * (h + (24 * d)))
+            def get_submission_time(s):
+                return s[:-13]
+            def pretty_time_str(s, m, h, d):
+                sstr = "" if s == 0 else str(s) + " second"
+                sstr += "" if sstr == "" or s == 1 else "s"
+                mstr = "" if m == 0 else str(m) + " minute"
+                mstr += "" if mstr == "" or m == 1 else "s"
+                hstr = "" if h == 0 else str(h) + " hour"
+                hstr += "" if hstr == "" or h == 1 else "s"
+                dstr = "" if d == 0 else str(d) + " day"
+                dstr += "" if dstr == "" or d == 1 else "s"
+                st = dstr
+                for tmpstr in [hstr, mstr, sstr]:
+                    if st != "" and tmpstr != "":
+                        st += " "
+                    st += tmpstr
+                if st == "":
+                    st = "none"
+                return st
+            with open(submission_metadata, "r") as jsonMetadata:
+                metadata = json.load(jsonMetadata)
+            current_subm_string = get_submission_time(metadata["created_at"])
+            current_time = time.strptime(current_subm_string,"%Y-%m-%dT%H:%M:%S")
+            restart_time = time.strptime(restart_subm_string, "%Y-%m-%dT%H:%M:%S") if restart_subm_string is not None else None
+            tokens_used = 0
+            print("=" * 30)
+            for i, v in enumerate(metadata["previous_submissions"]):
+                subm_string = get_submission_time(v["submission_time"])
+                subm_time = time.strptime(subm_string,"%Y-%m-%dT%H:%M:%S")
+                if restart_time is not None and time.mktime(subm_time) - time.mktime(restart_time) < 0:
+                    print("Ignoring a submission, too early!")
+                    continue
+                print("Current time: " + str(time.mktime(current_time)))
+                print("Subm time: " + str(time.mktime(subm_time)))
+                if (time.mktime(current_time) - time.mktime(subm_time) < regen_time_seconds): 
+                    try:
+                        print(metadata["previous_submissions"][i])
+                        print("Tokens used: " + str(tokens_used))
+                        print(str(metadata["previous_submissions"][i].keys()))
+                        print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
+                        if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1): 
+                            tokens_used = tokens_used + 1
+                    except: 
+                        tokens_used = tokens_used + 1
+                        pass
+                print("-" * 30)
+            print("=" * 30)
+            if tokens_used < tokens:
+                self.extra_data["sub_counts"] = 1
+                tokens_used += 1 # This is to include the current submission.
+                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
+            else:
+                self.extra_data["sub_counts"] = 0
+                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}, so the results of your last graded submission are being displayed. This submission will not count as a graded submission.")
+                
+                prev_subs = metadata["previous_submissions"]
+                prev_sub = prev_subs[len(prev_subs) - 1]
+                if "results" not in prev_sub or "tests" not in prev_sub["results"]:
+                    self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
+                    tests = []
+                    self.set_score(0)
+                else:
+                    res = prev_sub["results"]
+                    tests = res["tests"]
+                    leaderboard = res["leaderboard"]
+                    self.set_score(prev_sub.get("score"))
+                self.generate_results(test_results=tests, leaderboard=leaderboard)
+                import sys
+                sys.exit()
 
     def rate_limit_unset_submission(self):
         self.extra_data["sub_counts"] = 0
