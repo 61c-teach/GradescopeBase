@@ -364,6 +364,7 @@ class Autograder:
                     self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
                     tests = []
                     self.set_score(0)
+                    leaderboard = None
                 else:
                     res = prev_sub["results"]
                     tests = res["tests"]
