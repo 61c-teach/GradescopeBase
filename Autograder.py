@@ -157,7 +157,7 @@ class Autograder:
                     if h:
                         return AutograderSafeEnvError(h)
                 except Exception as exc:
-                    print("An exception occured while executing the exception handler!")
+                    print("An exception occurred while executing the exception handler!")
                     traceback.print_exc()
             self.ag_fail("An unexpected exception ocurred while trying to execute the autograder. Please try again or contact a TA if this persists.")
             return AutograderSafeEnvError(exc)
@@ -243,7 +243,7 @@ class Autograder:
             print(get_welcome_message())
         self.rate_limit_main()
         if not self.run_tests():
-            print("An error has occured when attempting to run all tests.")
+            print("An error has occurred when attempting to run all tests.")
         self.generate_results()
 
     @staticmethod
@@ -360,7 +360,7 @@ class Autograder:
                 
                 prev_subs = metadata["previous_submissions"]
                 prev_sub = prev_subs[len(prev_subs) - 1]
-                if "results" not in prev_sub or "tests" not in prev_sub["results"]:
+                if prev_sub and "results" not in prev_sub or prev_sub["results"] and "tests" not in prev_sub["results"]:
                     self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
                     tests = []
                     self.set_score(0)
