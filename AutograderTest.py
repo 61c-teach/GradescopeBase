@@ -59,7 +59,7 @@ class AutograderTest:
         global_tests.append(self)
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
-        self.output += sep.join(args) + end
+        self.output += sep.join(map(str, args)) + end
 
     def set_score(self, score):
         if score is None:
