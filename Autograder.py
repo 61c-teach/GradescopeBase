@@ -411,6 +411,12 @@ class Autograder:
                 else:
                     msg = "."
                 self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} This submission will not count as a graded submission.")
+
+                if oldest_counted_submission:
+                    next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
+                    self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
+                else:
+                    self.print(f"As of this submisison, you have not used any tokens.\n")
                 
                 if self.rate_limit.pull_prev_run:
                     prev_subs = metadata["previous_submissions"]
@@ -428,11 +434,6 @@ class Autograder:
                     self.generate_results(test_results=tests, leaderboard=leaderboard)
                 else:
                     self.generate_results()
-                if oldest_counted_submission:
-                    next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
-                    self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
-                else:
-                    self.print(f"As of this submisison, you have not used any tokens. This should never be reached! Please report this to a TA at once!\n")
                 
                 import sys
                 sys.exit()
