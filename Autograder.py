@@ -410,7 +410,7 @@ class Autograder:
                     msg = ", so the results of your last graded submission are being displayed."
                 else:
                     msg = "."
-                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} This submission will not count as a graded submission.")
+                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} Because you do not have any more tokens,this submission will not count as a graded submission.")
 
                 if oldest_counted_submission:
                     next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
