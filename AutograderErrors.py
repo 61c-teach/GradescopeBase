@@ -21,3 +21,6 @@ class AutograderFormatError(AutograderBaseError):
 
 class AutograderSafeEnvError(AutograderBaseError):
     pass
+
+class AutograderHalt(AutograderBaseError):
+    pass
