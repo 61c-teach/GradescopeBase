@@ -70,9 +70,9 @@ class RateLimit:
 
         if sub_to_count is not None:
             next_token_regen = datetime.datetime.fromtimestamp(time.mktime(sub_to_count)) + datetime_regen_rate
-            next_token_regen_str = f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n"
+            next_token_regen_str = f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n\n"
         else:
-            next_token_regen_str = "As of this submission time, you have not used any tokens!"
+            next_token_regen_str = "As of this submission time, you have not used any tokens!\n\n"
 
         return self.output + next_token_regen_str
 
