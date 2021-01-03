@@ -101,6 +101,13 @@ class Autograder:
         self.start_time = datetime.datetime.now()
         self.modify_results = modify_results
 
+        if not is_local():
+            with open(submission_metadata, "r") as jsonMetadata:
+                metadata = json.load(jsonMetadata)
+            self.extra_data["id"] = metadata["id"]
+        else:
+            self.extra_data["id"] = "LOCAL"
+
     @staticmethod
     def run(ag = None):
         global printed_welcome_message
@@ -383,7 +390,8 @@ class Autograder:
                             print("Tokens used: " + str(tokens_used))
                             print(str(metadata["previous_submissions"][i].keys()))
                             print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
-                        if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1) and (metadata["previous_submissions"][i]["id"] not in self.rate_limit.submission_id_exclude): 
+                        ed = metadata["previous_submissions"][i]["results"]["extra_data"]
+                        if (ed["sub_counts"] == 1) and (ed["id"] not in self.rate_limit.submission_id_exclude): 
                             if oldest_counted_submission is None:
                                 oldest_counted_submission = subm_time
                             tokens_used = tokens_used + 1
