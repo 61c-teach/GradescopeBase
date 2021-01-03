@@ -431,9 +431,12 @@ class Autograder:
                         tests = res["tests"]
                         leaderboard = res["leaderboard"]
                         self.set_score(prev_sub.get("score"))
-                    self.generate_results(test_results=tests, leaderboard=leaderboard)
                 else:
-                    self.generate_results()
+                        tests = []
+                        self.set_score(0)
+                        leaderboard = None
+                    
+                self.generate_results(test_results=tests, leaderboard=leaderboard)
                 
                 import sys
                 sys.exit()
