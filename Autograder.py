@@ -50,12 +50,19 @@ class RateLimit:
         self.oldest_token_time = None
         self.current_submission_time = None
 
+        self.main_string = ""
+        self.tokens_used = ""
+
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
         self.output += sep.join(map(str, args)) + end
 
     def set_next_token_regen(self, oldest_token_time, current_submission_time):
         self.oldest_token_time = oldest_token_time
         self.current_submission_time = current_submission_time
+
+    def rate_limit_set_main_string(self, string, tokens_used):
+        self.main_string = string
+        self.tokens_used = tokens_used
 
     def get_rate_limit_str(self, ag: "Autograder"):
         datetime_regen_rate = datetime.timedelta(seconds=self.total_seconds())
@@ -65,6 +72,11 @@ class RateLimit:
         else:
             if ag.rate_limit_does_submission_count():
                 sub_to_count = self.current_submission_time
+        
+
+        tu = self.tokens_used
+        if not ag.rate_limit_does_submission_count():
+            tu -= 1
 
         if sub_to_count is not None:
             next_token_regen = sub_to_count + datetime_regen_rate
@@ -72,7 +84,7 @@ class RateLimit:
         else:
             next_token_regen_str = "[Rate Limit]: As of this submission time, you have not used any tokens!\n\n"
 
-        return self.output + next_token_regen_str
+        return self.main_string.format(tu) + next_token_regen_str
 
     def total_seconds(self):
         return self.seconds + 60 * (self.minutes + 60 * (self.hours + (24 * self.days)))
@@ -413,7 +425,7 @@ class Autograder:
             if tokens_used < tokens:
                 self.extra_data["sub_counts"] = 1
                 tokens_used += 1 # This is to include the current submission.
-                self.rate_limit.print(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
+                self.rate_limit_set_main_string(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {{}} graded submissions.", tokens_used)
                 self.rate_limit.set_next_token_regen(oldest_counted_submission, datetime_current_time)
             else:
                 self.extra_data["sub_counts"] = 0
