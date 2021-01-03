@@ -395,7 +395,10 @@ class Autograder:
                             if oldest_counted_submission is None:
                                 oldest_counted_submission = subm_time
                             tokens_used = tokens_used + 1
-                    except:
+                    except Exception as e:
+                        import traceback
+                        traceback.print_exc()
+                        print(e)
                         tokens_used = tokens_used + 1
                         pass
                 if verbose:
