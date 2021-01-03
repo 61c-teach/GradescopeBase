@@ -425,7 +425,7 @@ class Autograder:
             if tokens_used < tokens:
                 self.extra_data["sub_counts"] = 1
                 tokens_used += 1 # This is to include the current submission.
-                self.rate_limit.rate_limit_set_main_string(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {{}} graded submissions.", tokens_used)
+                self.rate_limit.rate_limit_set_main_string(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {{}} graded submissions.\n", tokens_used)
                 self.rate_limit.set_next_token_regen(oldest_counted_submission, datetime_current_time)
             else:
                 self.extra_data["sub_counts"] = 0
