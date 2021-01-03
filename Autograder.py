@@ -227,13 +227,13 @@ class Autograder:
         def handle_failed():
                 self.set_score(0)
                 if "sub_counts" in self.extra_data:
-                    self.print("Since the autograder failed to run, you will not use up a token!")
+                    self.print("[Rate Limit]: Since the autograder failed to run, you will not use up a token!")
                     self.rate_limit_unset_submission()
         for setup in self.setups:
             if not setup.when_to_run.okay_to_run(local):
                 continue
             if not setup.run(self):
-                self.print("An error occurred in the setup of the Autograder!")
+                self.print("[Error]: An error occurred in the setup of the Autograder!")
                 handle_failed()
                 return False
         for test in self.tests:
@@ -244,7 +244,7 @@ class Autograder:
             if not teardown.when_to_run.okay_to_run(local):
                 continue
             if not teardown.run(self):
-                self.print("An error occurred in the teardown of the Autograder!")
+                self.print("[Error]: An error occurred in the teardown of the Autograder!")
                 handle_failed()
                 return False
         return True
