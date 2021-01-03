@@ -400,10 +400,10 @@ class Autograder:
     def rate_limit_unset_submission(self):
         self.extra_data["sub_counts"] = 0
 
+
     @staticmethod
-    def FAIL(msg):
+    def DUMP(msg):
         ag = Autograder()
         ag.print(msg)
         ag.set_score(0)
         ag.generate_results()
-        raise AutograderHalt("Failed!")
