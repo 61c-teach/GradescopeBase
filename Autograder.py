@@ -51,8 +51,6 @@ class RateLimit:
         self.current_submission_time = None
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
-        if self.output is None:
-            self.output = ""
         self.output += sep.join(map(str, args)) + end
 
     def set_next_token_regen(self, oldest_token_time, current_submission_time):
@@ -284,6 +282,8 @@ class Autograder:
         if not self.run_tests():
             print("An error has occurred when attempting to run all tests.")
         if isinstance(self.rate_limit, RateLimit):
+            if self.output is None:
+                self.output = ""
             self.output = self.rate_limit.get_rate_limit_str(self) + self.output
         self.generate_results()
 
