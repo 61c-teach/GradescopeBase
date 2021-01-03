@@ -68,9 +68,9 @@ class RateLimit:
 
         if sub_to_count is not None:
             next_token_regen = sub_to_count + datetime_regen_rate
-            next_token_regen_str = f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n\n"
+            next_token_regen_str = f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n\n"
         else:
-            next_token_regen_str = "As of this submission time, you have not used any tokens!\n\n"
+            next_token_regen_str = "[Rate Limit]: As of this submission time, you have not used any tokens!\n\n"
 
         return self.output + next_token_regen_str
 
@@ -402,7 +402,7 @@ class Autograder:
             if tokens_used < tokens:
                 self.extra_data["sub_counts"] = 1
                 tokens_used += 1 # This is to include the current submission.
-                self.rate_limit.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
+                self.rate_limit.print(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
                 self.rate_limit.set_next_token_regen(oldest_counted_submission, datetime_current_time)
             else:
                 self.extra_data["sub_counts"] = 0
@@ -410,13 +410,13 @@ class Autograder:
                     msg = ", so the results of your last graded submission are being displayed."
                 else:
                     msg = "."
-                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} Because you do not have any more tokens,this submission will not count as a graded submission.")
+                self.print(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} Because you do not have any more tokens,this submission will not count as a graded submission.")
 
                 if oldest_counted_submission:
                     next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
-                    self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
+                    self.print(f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
                 else:
-                    self.print(f"As of this submisison, you have not used any tokens.\n")
+                    self.print(f"[Rate Limit]: As of this submisison, you have not used any tokens.\n")
                 
                 if self.rate_limit.pull_prev_run:
                     prev_subs = metadata["previous_submissions"]
