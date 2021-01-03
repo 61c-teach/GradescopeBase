@@ -31,7 +31,9 @@ class RateLimit:
         minutes:int=0,
         hours:int=0,
         days:int=0,
-        reset_time:str=None
+        reset_time:str=None,
+        pull_prev_run=False,
+        submission_id_exclude=[]
     ):
         self.tokens = tokens
         self.seconds = seconds
@@ -39,6 +41,43 @@ class RateLimit:
         self.hours = hours
         self.days = days
         self.reset_time = reset_time
+        self.output = ""
+
+        self.pull_prev_run = pull_prev_run
+
+        self.submission_id_exclude = submission_id_exclude
+
+        self.oldest_token_time = None
+        self.current_submission_time = None
+
+    def print(self, *args, sep=' ', end='\n', file=None, flush=True):
+        if self.output is None:
+            self.output = ""
+        self.output += sep.join(map(str, args)) + end
+
+    def set_next_token_regen(self, oldest_token_time, current_submission_time):
+        self.oldest_token_time = oldest_token_time
+        self.current_submission_time = current_submission_time
+
+    def get_rate_limit_str(self, ag: "Autograder"):
+        datetime_regen_rate = datetime.timedelta(seconds=self.total_seconds())
+        sub_to_count = None
+        if self.oldest_token_time:
+            sub_to_count = self.oldest_token_time
+        else:
+            if ag.rate_limit_does_submission_count():
+                sub_to_count = self.current_submission_time
+
+        if sub_to_count is not None:
+            next_token_regen = datetime.datetime.fromtimestamp(time.mktime(sub_to_count)) + datetime_regen_rate
+            next_token_regen_str = f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n"
+        else:
+            next_token_regen_str = "As of this submission time, you have not used any tokens!"
+
+        return self.output + next_token_regen_str
+
+    def total_seconds(self):
+        return self.seconds + 60 * (self.minutes + 60 * (self.hours + (24 * self.days)))
 
 class Autograder:
     use_ratelimit_when_local = False
@@ -172,7 +211,7 @@ class Autograder:
                 self.set_score(0)
                 if "sub_counts" in self.extra_data:
                     self.print("Since the autograder failed to run, you will not use up a token!")
-                    self.extra_data["sub_counts"] = 0
+                    self.rate_limit_unset_submission()
         for setup in self.setups:
             if not setup.when_to_run.okay_to_run(local):
                 continue
@@ -244,6 +283,8 @@ class Autograder:
         self.rate_limit_main()
         if not self.run_tests():
             print("An error has occurred when attempting to run all tests.")
+        if isinstance(self.rate_limit, RateLimit):
+            self.output = self.rate_limit.get_rate_limit_str(self) + self.output
         self.generate_results()
 
     @staticmethod
@@ -285,7 +326,7 @@ class Autograder:
             return True
         return False
     
-    def rate_limit_main(self, verbose=False, pull_prev_run=False, submission_id_exclude=[]):
+    def rate_limit_main(self, verbose=False):
         if is_local() and not self.use_ratelimit_when_local:
             print("[WARNING]: Rate limit is enabled but will not be checked because this has been detected to be a local run!")
             return
@@ -296,7 +337,7 @@ class Autograder:
             m = self.rate_limit.minutes
             h = self.rate_limit.hours
             d = self.rate_limit.days
-            regen_time_seconds = s + 60 * (m + 60 * (h + (24 * d)))
+            regen_time_seconds = self.rate_limit.total_seconds()
             def get_submission_time(s):
                 return s[:-13]
             def pretty_time_str(s, m, h, d):
@@ -342,7 +383,7 @@ class Autograder:
                             print("Tokens used: " + str(tokens_used))
                             print(str(metadata["previous_submissions"][i].keys()))
                             print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
-                        if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1) and (metadata["previous_submissions"][i]["id"] not in submission_id_exclude): 
+                        if (metadata["previous_submissions"][i]["results"]["extra_data"]["sub_counts"] == 1) and (metadata["previous_submissions"][i]["id"] not in self.rate_limit.submission_id_exclude): 
                             if oldest_counted_submission is None:
                                 oldest_counted_submission = subm_time
                             tokens_used = tokens_used + 1
@@ -356,23 +397,22 @@ class Autograder:
             datetime_regen_rate = datetime.timedelta(seconds=regen_time_seconds)
             if oldest_counted_submission:
                 oldest_counted_submission = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission))
+            if current_time:
+                datetime_current_time = datetime.datetime.fromtimestamp(time.mktime(current_time))
             if tokens_used < tokens:
                 self.extra_data["sub_counts"] = 1
                 tokens_used += 1 # This is to include the current submission.
-                self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
-                if oldest_counted_submission is None:
-                    oldest_counted_submission = current_time
-                next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
-                self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.")
+                self.rate_limit.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. In the last period, you have had {tokens_used} graded submissions.")
+                self.rate_limit.set_next_token_regen(oldest_counted_submission, datetime_current_time)
             else:
                 self.extra_data["sub_counts"] = 0
-                if pull_prev_run:
+                if self.rate_limit.pull_prev_run:
                     msg = ", so the results of your last graded submission are being displayed."
                 else:
                     msg = "."
                 self.print(f"Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} This submission will not count as a graded submission.")
                 
-                if pull_prev_run:
+                if self.rate_limit.pull_prev_run:
                     prev_subs = metadata["previous_submissions"]
                     prev_sub = prev_subs[len(prev_subs) - 1]
                     if prev_sub and "results" not in prev_sub or prev_sub["results"] and "tests" not in prev_sub["results"]:
@@ -388,18 +428,21 @@ class Autograder:
                     self.generate_results(test_results=tests, leaderboard=leaderboard)
                 else:
                     self.generate_results()
-                # import sys
-                # sys.exit()
                 if oldest_counted_submission:
                     next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
-                    self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.")
+                    self.print(f"As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
                 else:
-                    self.print(f"As of this submisison, you have not used any tokens.")
-                raise AutograderHalt("Rate limited!")
+                    self.print(f"As of this submisison, you have not used any tokens. This should never be reached! Please report this to a TA at once!\n")
+                
+                import sys
+                sys.exit()
+                # raise AutograderHalt("Rate limited!")
 
     def rate_limit_unset_submission(self):
         self.extra_data["sub_counts"] = 0
 
+    def rate_limit_does_submission_count(self):
+        return self.extra_data["sub_counts"]
 
     @staticmethod
     def DUMP(msg):
