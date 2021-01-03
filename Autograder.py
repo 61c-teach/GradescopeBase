@@ -68,7 +68,7 @@ class RateLimit:
 
         if sub_to_count is not None:
             next_token_regen = sub_to_count + datetime_regen_rate
-            next_token_regen_str = f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n\n"
+            next_token_regen_str = f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()} (PT).\n\n"
         else:
             next_token_regen_str = "[Rate Limit]: As of this submission time, you have not used any tokens!\n\n"
 
@@ -414,7 +414,7 @@ class Autograder:
 
                 if oldest_counted_submission:
                     next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
-                    self.print(f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()}.\n")
+                    self.print(f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()} (PT).\n")
                 else:
                     self.print(f"[Rate Limit]: As of this submisison, you have not used any tokens.\n")
                 
