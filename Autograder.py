@@ -436,7 +436,7 @@ class Autograder:
                 self.print(f"[Rate Limit]: Students can get up to {tokens} graded submissions within any given period of {pretty_time_str(s, m, h, d)}. You have already had {tokens_used} graded submissions within the last {pretty_time_str(s, m, h, d)}{msg} Because you do not have any more tokens,this submission will not count as a graded submission.")
 
                 if oldest_counted_submission:
-                    next_token_regen = datetime.datetime.fromtimestamp(time.mktime(oldest_counted_submission)) + datetime_regen_rate
+                    next_token_regen = oldest_counted_submission + datetime_regen_rate
                     self.print(f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()} (PT).\n")
                 else:
                     self.print(f"[Rate Limit]: As of this submisison, you have not used any tokens.\n")
