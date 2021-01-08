@@ -115,10 +115,11 @@ class Autograder:
 
         if not is_local():
             with open(submission_metadata, "r") as jsonMetadata:
-                metadata = json.load(jsonMetadata)
-            self.extra_data["id"] = metadata["id"]
+                self.metadata = json.load(jsonMetadata)
+            self.extra_data["id"] = self.metadata["id"]
         else:
             self.extra_data["id"] = "LOCAL"
+            self.metadata = None
 
     @staticmethod
     def run(ag = None):
@@ -376,16 +377,14 @@ class Autograder:
                 if st == "":
                     st = "none"
                 return st
-            with open(submission_metadata, "r") as jsonMetadata:
-                metadata = json.load(jsonMetadata)
-            current_subm_string = get_submission_time(metadata["created_at"])
+            current_subm_string = get_submission_time(self.metadata["created_at"])
             current_time = time.strptime(current_subm_string,"%Y-%m-%dT%H:%M:%S")
             restart_time = time.strptime(restart_subm_string, "%Y-%m-%dT%H:%M:%S") if restart_subm_string is not None else None
             tokens_used = 0
             if verbose:
                 print("=" * 30)
             oldest_counted_submission = None
-            for i, v in enumerate(metadata["previous_submissions"]):
+            for i, v in enumerate(self.metadata["previous_submissions"]):
                 subm_string = get_submission_time(v["submission_time"])
                 subm_time = time.strptime(subm_string,"%Y-%m-%dT%H:%M:%S")
                 if restart_time is not None and time.mktime(subm_time) - time.mktime(restart_time) < 0:
@@ -398,11 +397,11 @@ class Autograder:
                 if (time.mktime(current_time) - time.mktime(subm_time) < regen_time_seconds): 
                     try:
                         if verbose:
-                            print(metadata["previous_submissions"][i])
+                            print(self.metadata["previous_submissions"][i])
                             print("Tokens used: " + str(tokens_used))
-                            print(str(metadata["previous_submissions"][i].keys()))
-                            print("Current submission data: " + str(metadata["previous_submissions"][i]["results"]["extra_data"]))
-                        ed = metadata["previous_submissions"][i]["results"]["extra_data"]
+                            print(str(self.metadata["previous_submissions"][i].keys()))
+                            print("Current submission data: " + str(self.metadata["previous_submissions"][i]["results"]["extra_data"]))
+                        ed = self.metadata["previous_submissions"][i]["results"]["extra_data"]
                         if (ed["sub_counts"] == 1) and (ed["id"] not in self.rate_limit.submission_id_exclude): 
                             if oldest_counted_submission is None:
                                 oldest_counted_submission = subm_time
@@ -442,7 +441,7 @@ class Autograder:
                     self.print(f"[Rate Limit]: As of this submisison, you have not used any tokens.\n")
                 
                 if self.rate_limit.pull_prev_run:
-                    prev_subs = metadata["previous_submissions"]
+                    prev_subs = self.metadata["previous_submissions"]
                     prev_sub = prev_subs[len(prev_subs) - 1]
                     if prev_sub and "results" not in prev_sub or prev_sub["results"] and "tests" not in prev_sub["results"]:
                         self.print("[ERROR]: Could not pull the data from your previous submission! This is probably due to it not have finished running!")
