@@ -174,7 +174,7 @@ class SubTestRunner(object):
     def __call__(self, ag: Autograder, test: AutograderTest):
         r = self.runner(ag, test)
         if isinstance(r, StopSubTestRunner):
-            print(f"The subtest runner stopped on {r.info}!")
+            print(f"[ERROR]: ({test.name}) The subtest runner stopped on {r.info}!")
 
     def runner(self, ag: Autograder, test: AutograderTest):
         data = {
