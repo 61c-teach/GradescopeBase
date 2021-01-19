@@ -243,7 +243,7 @@ class Autograder:
         for test in self.tests:
             test.run(self)
             if self.export_tests_after_test:
-                self.generate_results()
+                self.generate_results(print_main_score_warning_error=False)
         for teardown in self.teardowns:
             if not teardown.when_to_run.okay_to_run(local):
                 continue
@@ -253,7 +253,7 @@ class Autograder:
                 return False
         return True
 
-    def generate_results(self, test_results=None, leaderboard=None, dump=True):
+    def generate_results(self, test_results=None, leaderboard=None, dump=True, print_main_score_warning_error=True):
         results = {
             "execution_time": (datetime.datetime.now() - self.start_time).total_seconds(),
         }
