@@ -277,7 +277,8 @@ class Autograder:
         else:
             if "tests" not in results or len(results["tests"]) == 0 or not any(["score" in t for t in results["tests"]]):
                 results["score"] = 0
-                self.print("This autograder does not set the main score or have any tests which give points!")
+                if print_main_score_warning_error:
+                    self.print("This autograder does not set the main score or have any tests which give points!")
         if self.output is not None:
             results["output"] = self.output
         if self.visibility is not None:
