@@ -17,9 +17,7 @@ from .AutograderTest import AutograderTest, global_tests, Max
 from .AutograderErrors import AutograderSafeEnvError, AutograderHalt
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
-from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun
-
-submission_metadata = "/autograder/submission_metadata.json"
+from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun, submission_metadata_dir
 
 printed_welcome_message = False
 
@@ -114,12 +112,17 @@ class Autograder:
         self.modify_results = modify_results
 
         if not is_local():
-            with open(submission_metadata, "r") as jsonMetadata:
+            with open(submission_metadata_dir(), "r") as jsonMetadata:
                 self.metadata = json.load(jsonMetadata)
             self.extra_data["id"] = self.metadata["id"]
         else:
-            self.extra_data["id"] = "LOCAL"
-            self.metadata = None
+            if os.path.isfile(submission_metadata_dir()):
+                with open(submission_metadata_dir(), "r") as jsonMetadata:
+                    self.metadata = json.load(jsonMetadata)
+                self.extra_data["id"] = self.metadata["id"]
+            else:
+                self.extra_data["id"] = "LOCAL"
+                self.metadata = None
 
     @staticmethod
     def run(ag = None):

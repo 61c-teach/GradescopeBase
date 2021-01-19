@@ -33,6 +33,14 @@ def submission_dir() -> str:
         return "./submission"
     return "/autograder/submission"
 
+def submission_metadata_dir() -> str:
+    """
+    This returns the dir which contains the submission.
+    """
+    if is_local():
+        return "./submission_metadata.json"
+    return "/autograder/submission_metadata.json"
+
 def results_path() -> str:
     """
     This returns the path which the results json should be exported to.
