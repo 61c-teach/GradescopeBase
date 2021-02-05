@@ -51,8 +51,11 @@ class RateLimit:
         self.main_string = ""
         self.tokens_used = ""
 
-    def print(self, *args, sep=' ', end='\n', file=None, flush=True):
-        self.output += sep.join(map(str, args)) + end
+    def print(self, *args, sep=' ', end='\n', file=None, flush=True, also_stdout=False):
+        msg = sep.join(map(str, args)) + end
+        if also_stdout:
+            print(msg)
+        self.output += msg
 
     def set_next_token_regen(self, oldest_token_time, current_submission_time):
         self.oldest_token_time = oldest_token_time
