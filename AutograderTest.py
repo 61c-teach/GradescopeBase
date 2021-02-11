@@ -119,7 +119,7 @@ class AutograderTest:
     def get_results(self):
         o = self.output
         if self.ran is False:
-            o = "[WARNING]: This test has not run yet!"
+            o = "[WARNING]: This test did not run!"
         data = {"output": o}
         if self.max_score is not None:
             data["max_score"] = self.max_score
