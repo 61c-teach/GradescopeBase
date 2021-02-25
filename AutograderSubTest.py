@@ -165,7 +165,10 @@ class SubTestRunner(object):
         return sum(data["passed"]) / amt >= self.pass_fail_ratio
 
     def run_test(self, ag: Autograder, test: AutograderTest, t, data):
-        res = t.run(ag, handler=self.stopSubTestRunnerHandler)
+        try:
+            res = t.run(ag, handler=self.stopSubTestRunnerHandler)
+        except StopSubTestRunner as e:
+            return e
         if isinstance(res, AutograderSafeEnvError):
             return res.info
 
