@@ -7,7 +7,7 @@
  */
 """
 from .AutograderTest import AutograderTest
-from .Autograder import Autograder
+from .Autograder import Autograder, AutograderSafeEnvError
 from . import Visibility
 from typing import Callable
 from .AutograderErrors import AutograderFormatError
@@ -84,7 +84,7 @@ class AutograderSubTest(AutograderTest):
             return 0
         return score
 
-class StopSubTestRunner(object):
+class StopSubTestRunner(BaseException):
     def __init__(self, info=""):
         self.info = info
         
@@ -164,8 +164,10 @@ class SubTestRunner(object):
             return False
         return sum(data["passed"]) / amt >= self.pass_fail_ratio
 
-    def run_test(self, ag, test, t, data):
-        t.run(ag)
+    def run_test(self, ag: Autograder, test: AutograderTest, t, data):
+        res = t.run(ag, handler=self.stopSubTestRunnerHandler)
+        if isinstance(res, AutograderSafeEnvError):
+            return res.info
 
     def part_stopped(self, idx: str, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data: dict):
         test.print("[Warning]: This test stopped early!")
@@ -175,6 +177,11 @@ class SubTestRunner(object):
         r = self.runner(ag, test)
         if isinstance(r, StopSubTestRunner):
             print(f"[Warning]: The subtest runner stopped on {r.info}! ({test.name})")
+
+    @staticmethod
+    def stopSubTestRunnerHandler(exception):
+        if isinstance(exception, StopSubTestRunner):
+            return exception
 
     def runner(self, ag: Autograder, test: AutograderTest):
         data = {
@@ -195,8 +202,12 @@ class SubTestRunner(object):
                 r = self.part_stopped("pre_subtest_run", ag, test, t, data)
                 if isinstance(r, StopSubTestRunner):
                     return r
-            if self.run_test(ag, test, t, data) is False:
+            res = self.run_test(ag, test, t, data)
+            is_subtest_stopper = isinstance(res, StopSubTestRunner)
+            if res is False or is_subtest_stopper:
                 r = self.part_stopped("run_test", ag, test, t, data)
+                if is_subtest_stopper:
+                    return res
                 if isinstance(r, StopSubTestRunner):
                     return r
             if self.post_subtest_run(ag, test, t, data) is False:

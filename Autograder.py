@@ -151,7 +151,7 @@ class Autograder:
             print(get_welcome_message())
         if ag is None:
             ag = Autograder()
-        def handler():
+        def handler(exception):
             ag.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
             return True
         def wrapper():
@@ -226,7 +226,7 @@ class Autograder:
             print(exc)
             if handler is not None:
                 try:
-                    h = handler()
+                    h = handler(exc)
                     if h:
                         return AutograderSafeEnvError(h)
                 except Exception as exc:

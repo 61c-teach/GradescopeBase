@@ -10,7 +10,7 @@ import os
 import enum
 from distutils.version import LooseVersion
 
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 
 def get_welcome_message():
     return f"Thank you for using GradescopeBase v{VERSION} created by ThaumicMekanism [Stephan K.]!"

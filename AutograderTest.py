@@ -88,7 +88,7 @@ class AutograderTest:
     def get_score(self):
         return self.score
 
-    def run(self, ag):
+    def run(self, ag, handler=None):
         self.ran = True
         if self.test_fn is None:
             self.print("[ERROR]: This test case does not have a callable function!")
@@ -109,7 +109,7 @@ class AutograderTest:
                 self.print("[ERROR]: This test timed out!")
                 set_score(0)
 
-        def handler():
+        def default_handler(exception):
             if not self.do_not_set_score:
                 self.set_score(0)
             if self.kill_autograder_on_error:
@@ -117,7 +117,7 @@ class AutograderTest:
             self.print("[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
             return True
 
-        ag.safe_env(f, handler=handler)
+        ag.safe_env(f, handler=handler if handler is not None else default_handler)
 
     def get_results(self):
         o = self.output

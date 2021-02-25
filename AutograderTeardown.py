@@ -31,7 +31,7 @@ class AutograderTeardown:
                 ag.print("[ERROR]: A teardown step timed out!")
                 success = False
 
-        def handler():
+        def handler(exception):
             nonlocal success
             success = False
             print(f"The teardown {self.name} has encountered an error!")

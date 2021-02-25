@@ -31,7 +31,7 @@ class AutograderSetup:
                 ag.print("[ERROR]: A setup step timed out!")
                 success = False
 
-        def handler():
+        def handler(exception):
             nonlocal success
             success = False
             print(f"The setup {self.name} has encountered an error!")
