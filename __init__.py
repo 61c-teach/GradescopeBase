@@ -10,7 +10,7 @@ from .Autograder import Autograder, RateLimit
 from .AutograderTest import AutograderTest, Max, global_tests
 from .AutograderSetup import AutograderSetup
 from .AutograderTeardown import AutograderTeardown
-from .AutograderSubTest import AutograderSubTest, SubTestRunner
+from .AutograderSubTest import AutograderSubTest, SubTestRunner, StopSubTestRunner
 from .AutograderErrors import AutograderBaseError, AutograderFormatError, AutograderSafeEnvError
 from .Visibility import Visibility
 
@@ -72,6 +72,7 @@ __all__ = [
     "AutograderSubTest",
     "SubTest",
     "SubTestRunner",
+    "StopSubTestRunner",
     "AutograderBaseError", 
     "AutograderFormatError", 
     "AutograderSafeEnvError"
