@@ -85,6 +85,9 @@ class AutograderTest:
     def remove_score(self):
         self.score = None
 
+    def get_score(self):
+        return self.score
+
     def run(self, ag):
         self.ran = True
         if self.test_fn is None:

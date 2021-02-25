@@ -184,7 +184,17 @@ class Autograder:
         self.score += addition
     
     def get_score(self):
-        return self.score
+        score = None
+        for test in self.tests:
+            test_score = test.get_score()
+            if test_score is not None:
+                if score is None:
+                    score = test_score
+                else:
+                    score += test_score
+        if score is None:
+            score = self.score
+        return score
 
     def print(self, *args, sep=' ', end='\n', file=None, flush=True):
         if self.output is None:
