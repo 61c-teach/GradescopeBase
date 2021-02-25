@@ -168,6 +168,8 @@ class SubTestRunner(object):
         try:
             res = t.run(ag, handler=self.stopSubTestRunnerHandler)
         except StopSubTestRunner as e:
+            if e.info:
+                test.print(e.info)
             return e
         if isinstance(res, AutograderSafeEnvError):
             return res.info
@@ -209,8 +211,6 @@ class SubTestRunner(object):
             is_subtest_stopper = isinstance(res, StopSubTestRunner)
             if res is False or is_subtest_stopper:
                 r = self.part_stopped("run_test", ag, test, t, data)
-                if is_subtest_stopper:
-                    return res
                 if isinstance(r, StopSubTestRunner):
                     return r
             if self.post_subtest_run(ag, test, t, data) is False:
