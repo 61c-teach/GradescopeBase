@@ -249,7 +249,9 @@ class Autograder:
         for setup in self.setups:
             if not setup.when_to_run.okay_to_run(local):
                 continue
-            if not setup.run(self):
+            res = setup.run(self)
+            if not res:
+                print(f"[Error]: ({setup.name}) Returned non-true value `{res}` so assuming it failed!")
                 self.print("[Error]: An error occurred in the setup of the Autograder!")
                 handle_failed()
                 return False
@@ -260,7 +262,9 @@ class Autograder:
         for teardown in self.teardowns:
             if not teardown.when_to_run.okay_to_run(local):
                 continue
-            if not teardown.run(self):
+            res = teardown.run(self)
+            if not res:
+                print(f"[Error]: ({teardown.name}) Returned non-true value `{res}` so assuming it failed!")
                 self.print("[Error]: An error occurred in the teardown of the Autograder!")
                 handle_failed()
                 return False
