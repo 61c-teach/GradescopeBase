@@ -163,9 +163,12 @@ class Autograder:
         with open(self.results_file, "w") as f:
             f.write(jsondata)
 
-    def add_test(self, test):
+    def add_test(self, test, index=None):
         if isinstance(test, AutograderTest):
-            self.tests.append(test)
+            if index is None:
+                self.tests.append(test)
+            else:
+                self.tests.insert(index, test)
             return
         raise ValueError("You must add type Test to the autograder.")
 
