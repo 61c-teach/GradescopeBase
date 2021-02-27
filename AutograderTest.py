@@ -26,6 +26,7 @@ class AutograderTest:
         test_fn: Callable[["Autograder", "AutograderTest"], any]=None,
         name: str=None, 
         max_score: float=None, 
+        score: float=None,
         number: str=None, 
         tags: [str]=None, 
         visibility: Visibility=default_visibility, 
@@ -48,7 +49,7 @@ class AutograderTest:
         self.tags = tags
         self.visibility = visibility
         self.extra_data = extra_data
-        self.score = None
+        self.score = score
         self.output = ""
         self.kill_autograder_on_error = kill_autograder_on_error
         self.do_not_set_score = do_not_set_score
