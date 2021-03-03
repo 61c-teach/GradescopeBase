@@ -426,11 +426,15 @@ class Autograder:
                             print(str(self.metadata["previous_submissions"][i].keys()))
                             print("Current submission data: " + str(self.metadata["previous_submissions"][i]["results"]["extra_data"]))
                         ed = self.metadata["previous_submissions"][i]["results"]["extra_data"]
-                        subID = ed.get("id")
-                        if (ed["sub_counts"] == 1) and (subID and (subID not in self.rate_limit.submission_id_exclude)): 
-                            if oldest_counted_submission is None:
-                                oldest_counted_submission = subm_time
-                            tokens_used = tokens_used + 1
+                        if ed is not None:
+                            subID = ed.get("id")
+                            if (ed["sub_counts"] == 1) and (subID and (subID not in self.rate_limit.submission_id_exclude)): 
+                                if oldest_counted_submission is None:
+                                    oldest_counted_submission = subm_time
+                                tokens_used = tokens_used + 1
+                        else:
+                            if verbose:
+                                print(f"Extra data not available in previous submission {i}!")
                     except Exception as e:
                         import traceback
                         traceback.print_exc()
