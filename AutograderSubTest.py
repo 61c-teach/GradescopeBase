@@ -115,10 +115,10 @@ class SubTestRunner(object):
         if self.is_pass_fail:
             if self.did_pass(data):
                 test.set_score(True)
-                passed = "✓ PASSED"
+                passed = "[✓] PASSED"
             else:
                 test.set_score(False)
-                passed = "X FAILED"
+                passed = "[X] FAILED"
             test.print(passed)
         else:
             test.set_score(data["score"])
@@ -141,9 +141,9 @@ class SubTestRunner(object):
         test.print(t.output)
         test.print("-" * self.separator_count)
         if self.is_pass_fail:
-            msg = "X FAILED"
+            msg = "[X] FAILED"
             if passed:
-                msg = "✓ PASSED"
+                msg = "[✓] PASSED"
             test.print(msg)
         else:
             test.print(f"{score} / {t.max_score}")
