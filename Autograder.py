@@ -160,8 +160,8 @@ class Autograder:
 
     def dump_results(self, data: dict) -> None:
         jsondata = json.dumps(data, ensure_ascii=False)
-        with open(self.results_file, "w") as f:
-            f.write(jsondata)
+        with open(self.results_file, "wb") as f:
+            f.write(jsondata.encode("unicode-escape"))
 
     def add_test(self, test, index=None):
         if isinstance(test, AutograderTest):
