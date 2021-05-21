@@ -24,10 +24,11 @@ def is_local() -> bool:
 
 def root_dir() -> str:
     """
-    This function assumes the root directory is the one right above the GradescopeBase folder.
+    This function assumes the root directory is the current directory you are in if local and the source dir if not.
     """
-    dirname = os.path.dirname
-    return dirname(dirname(os.path.realpath(__file__)))
+    if is_local():
+        return "."
+    return "/autograder/source"
 
 def submission_dir() -> str:
     """
@@ -104,12 +105,16 @@ class WhenToRun(enum.Enum):
             return True
         return (state and self is self.LOCAL) or (not state and self is self.GRADESCOPE)
 
-def module_from_file(module_name, file_path):
-    module_name = module_name.replace("/", ".")
+def module_from_file(file_path):
+    file_path = file_path.replace("/", ".")
     ENDING = ".py"
-    if module_name.endswith(ENDING):
-        module_name = module_name[:-len(ENDING)]
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    if file_path.endswith(ENDING):
+        file_path = file_path[:-len(ENDING)]
+    splits = file_path.split(".")
+    if len(splits) == 1:
+        file = file_path
+        package = "."
+    else:
+        file = splits[len(splits) - 1]
+        package = ".".join(splits[:-1])
+    importlib.import_module(".{}".format(file), package=package)
