@@ -15,13 +15,13 @@ import json
 import os
 from typing import Callable, List, Union
 
-from .AutograderErrors import AutograderSafeEnvError, AutograderHalt
+from .AutograderErrors import AutograderSafeEnvError
 from .AutograderLeaderboard import Leaderboard
 from .AutograderRateLimit import RateLimit
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
 from .AutograderTest import AutograderTest, global_tests, Max
-from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun, submission_metadata_dir
+from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, submission_metadata_dir, module_from_file
 
 printed_welcome_message = False
 
@@ -117,16 +117,14 @@ class Autograder:
         if isinstance(test_files, str):
             test_files = [test_files]
         
-        def import_file(filename, package=None):
+        def import_file(filepath):
             if verbose:
-                print(f"Importing file {filename} in package {package}.")
-            file = filename
-            if file.endswith(".py"):
-                file = file[:-3]   
+                print(f"Importing file {filepath}.") 
             try:
-                importlib.import_module(".{}".format(file), package=package)
+                # importlib.import_module(".{}".format(file), package=package)
+                module_from_file(filepath, filepath)
             except Exception as e:
-                print(f"Could not add a test file {filename}!")
+                print(f"Could not add a test file {filepath}!")
                 import traceback
                 traceback.print_exc()
                 print(e)
@@ -139,7 +137,7 @@ class Autograder:
             for file in files:
                 filepath = os.path.join(dir, file)
                 if file.endswith(".py") and file not in blacklist and os.path.isfile(filepath):
-                    import_file(file, package=dir)
+                    import_file(filepath)
         return self
 
     def add_test(self, test, index=None):
