@@ -13,10 +13,11 @@ import json
 import time
 import datetime
 import os
-from .AutograderTest import AutograderTest, global_tests, Max
 from .AutograderErrors import AutograderSafeEnvError, AutograderHalt
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
+from .AutograderTest import AutograderTest, global_tests, Max
+from .Leaderboard import Leaderboard
 from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun, submission_metadata_dir
 
 printed_welcome_message = False
@@ -103,7 +104,7 @@ class Autograder:
         self.visibility = None
         self.stdout_visibility = None
         self.extra_data = {}
-        self.leaderboard = None
+        self.leaderboard = Leaderboard()
         self.reverse_tests = reverse_tests
         self.export_tests_after_test = export_tests_after_test
         # rate_limit takes in a RateLimit class.
@@ -199,10 +200,13 @@ class Autograder:
             score = self.score
         return score
 
-    def print(self, *args, sep=' ', end='\n', file=None, flush=True):
+    def print(self, *args, sep=' ', end='\n', file=None, flush=True, also_stdout=False):
         if self.output is None:
             self.output = ""
-        self.output += sep.join(map(str, args)) + end
+        msg = sep.join(map(str, args)) + end
+        if also_stdout:
+            print(msg)
+        self.output += msg
 
     def create_test(self, *args, **kwargs):
         test = AutograderTest(*args, **kwargs)
@@ -273,7 +277,7 @@ class Autograder:
                 return False
         return True
 
-    def generate_results(self, test_results=None, leaderboard=None, dump=True, print_main_score_warning_error=True):
+    def generate_results(self, test_results=None, leaderboard: Leaderboard=None, dump=True, print_main_score_warning_error=True):
         results = {
             "execution_time": (datetime.datetime.now() - self.start_time).total_seconds(),
         }
@@ -307,11 +311,12 @@ class Autograder:
             results["stdout_visibility"] = self.stdout_visibility
         if self.extra_data:
             results["extra_data"] = self.extra_data
-        if leaderboard:
-            results["leaderboard"] = leaderboard
+        if leaderboard is not None:
+            leaderboard_export = leaderboard.export()
         else:
-            if self.leaderboard is not None:
-                results["leaderboard"] = self.leaderboard
+            leaderboard_export = self.leaderboard.export()
+        if leaderboard_export:
+            results["leaderboard"] = leaderboard_export
         results = self.modify_results(results)
         if dump:
             self.dump_results(results)
@@ -338,37 +343,6 @@ class Autograder:
     @staticmethod
     def submission_dir() -> str:
         return submission_dir()
-
-    def add_leaderboard_item(self, name: str, value: any, order: str=None):
-        if self.leaderboard is None:
-            self.leaderboard = []
-        for item in self.leaderboard:
-            if item["name"] == name:
-                item["value"] = value
-                if order is not None:
-                    item["order"] = order
-                break
-        else:
-            item = {
-                "name": name,
-                "value": value
-            }
-            if order is not None:
-                item["order"] = order
-            self.leaderboard.append(item)
-    
-    def get_leaderboard_item(self, name: str):
-        for item in self.leaderboard:
-            if item["name"] == name:
-                return item
-        return None
-    
-    def remove_leaderboard_item(self, name: str):
-        item = self.get_leaderboard_item(name)
-        if item:
-            self.leaderboard.remove(item)
-            return True
-        return False
     
     def rate_limit_main(self, verbose=False):
         if is_local() and not self.use_ratelimit_when_local:
