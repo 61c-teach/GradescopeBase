@@ -6,11 +6,14 @@
  * @Last Modified time: 2020-01-30 16:27:10
  */
 """
-import os
 import enum
+import os
+import pathlib
+
 from distutils.version import LooseVersion
 
-VERSION = "1.0.3"
+with open(os.path.join(pathlib.Path(__file__).parent.absolute(), 'VERSION')) as version_file:
+    VERSION = version_file.read().strip()
 
 def get_welcome_message():
     return f"Thank you for using GradescopeBase v{VERSION} created by ThaumicMekanism [Stephan K.]!"
