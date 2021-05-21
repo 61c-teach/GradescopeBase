@@ -35,6 +35,10 @@ class Autograder:
         export_tests_after_test: bool=True, 
         modify_results=lambda results: results
     ):
+        global printed_welcome_message
+        if not printed_welcome_message:
+            printed_welcome_message = True
+            print(get_welcome_message())
         self.tests = []
         self.setups = []
         self.teardowns = []
@@ -69,10 +73,6 @@ class Autograder:
                 self.metadata = None
 
     def run(self, import_globals: bool=True):
-        global printed_welcome_message
-        if not printed_welcome_message:
-            printed_welcome_message = True
-            print(get_welcome_message())
         def f(ag: "Autograder"):
             if import_globals:
                 for t in global_tests:
@@ -85,10 +85,6 @@ class Autograder:
         return self.safe_main(f)
 
     def safe_main(self, f: Callable[["Autograder"], None]):
-        global printed_welcome_message
-        if not printed_welcome_message:
-            printed_welcome_message = True
-            print(get_welcome_message())
         def handler(exception):
             self.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
             return True
@@ -105,7 +101,8 @@ class Autograder:
     def import_tests(self, *, 
         tests_dir: Union[str, List[str]]=None, 
         test_files: Union[str, List[str]]=None, 
-        blacklist: Union[str, List[str]]=None
+        blacklist: Union[str, List[str]]=None,
+        verbose: bool=True
     ):
         if tests_dir is None:
             tests_dir = []
@@ -118,7 +115,8 @@ class Autograder:
             test_files = [test_files]
         
         def import_file(filename, package=None):
-            print(f"Importing file {filename} in package {package}.")
+            if verbose:
+                print(f"Importing file {filename} in package {package}.")
             file = filename
             if file.endswith(".py"):
                 file = file[:-3]   

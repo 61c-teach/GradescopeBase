@@ -16,7 +16,7 @@ with open(os.path.join(pathlib.Path(__file__).parent.absolute(), 'VERSION')) as 
     VERSION = version_file.read().strip()
 
 def get_welcome_message():
-    return f"Thank you for using GradescopeBase v{VERSION} created by ThaumicMekanism [Stephan K.]!"
+    return f"Initializing the GradescopeBase Autograder v{VERSION} created by ThaumicMekanism [Stephan K.]."
 
 def is_local() -> bool:
     return os.environ.get("IS_LOCAL") == "true"
