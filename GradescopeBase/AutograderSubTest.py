@@ -12,7 +12,6 @@ from . import Visibility
 from typing import Callable
 from .AutograderErrors import AutograderFormatError
 from .Utils import NoneLooseVersion
-import inspect
 
 SUB_TESTS_KEY = "sub_tests"
 ISPASSFAIL = True
