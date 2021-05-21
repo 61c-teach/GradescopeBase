@@ -72,6 +72,8 @@ setup(
     # simple. Or you can use find_packages().
     packages=find_packages(include=["GradescopeBase", "GradescopeBase.autograder_utils"]),
 
+    include_package_data=True,
+
     python_requires = ">=3.6",
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
