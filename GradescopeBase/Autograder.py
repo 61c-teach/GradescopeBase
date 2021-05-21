@@ -33,12 +33,14 @@ class Autograder:
         rate_limit: RateLimit=None, 
         reverse_tests: bool=False, 
         export_tests_after_test: bool=True, 
-        modify_results=lambda results: results
+        modify_results=lambda results: results,
+        print_welcome_message: bool=True,
     ):
-        global printed_welcome_message
-        if not printed_welcome_message:
-            printed_welcome_message = True
-            print(get_welcome_message())
+        if print_welcome_message:
+            global printed_welcome_message
+            if not printed_welcome_message:
+                printed_welcome_message = True
+                print(get_welcome_message())
         self.tests = []
         self.setups = []
         self.teardowns = []
