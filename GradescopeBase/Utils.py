@@ -105,6 +105,10 @@ class WhenToRun(enum.Enum):
         return (state and self is self.LOCAL) or (not state and self is self.GRADESCOPE)
 
 def module_from_file(module_name, file_path):
+    module_name = module_name.replace("/", ".")
+    ENDING = ".py"
+    if module_name.endswith(ENDING):
+        module_name = module_name[:-len(ENDING)]
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
