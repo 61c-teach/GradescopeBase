@@ -1,5 +1,5 @@
 import datetime
-from .Autograder import Autograder
+from . import Autograder
 
 class RateLimit:
     def __init__(

@@ -14,7 +14,7 @@ import importlib
 import json
 import os
 import time
-from typing import List, Union
+from typing import Callable, List, Union
 
 from .AutograderErrors import AutograderSafeEnvError, AutograderHalt
 from .AutograderLeaderboard import Leaderboard
@@ -68,41 +68,38 @@ class Autograder:
                 self.extra_data["id"] = "LOCAL"
                 self.metadata = None
 
-    @staticmethod
-    def run(ag = None):
+    def run(self, import_globals: bool=True):
         global printed_welcome_message
         if not printed_welcome_message:
             printed_welcome_message = True
             print(get_welcome_message())
-        def f(ag):
-            for t in global_tests:
-                ag.add_test(t)
-            for s in global_setups:
-                ag.add_setup(s)
-            for t in global_teardowns:
-                ag.add_teardown(t)
+        def f(ag: "Autograder"):
+            if import_globals:
+                for t in global_tests:
+                    ag.add_test(t)
+                for s in global_setups:
+                    ag.add_setup(s)
+                for t in global_teardowns:
+                    ag.add_teardown(t)
             ag.execute()
-        Autograder.main(f, ag=ag)
+        return self.safe_main(f)
 
-    @staticmethod
-    def main(f, ag=None):
+    def safe_main(self, f: Callable[["Autograder"], None]):
         global printed_welcome_message
         if not printed_welcome_message:
             printed_welcome_message = True
             print(get_welcome_message())
-        if ag is None:
-            ag = Autograder()
         def handler(exception):
-            ag.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
+            self.ag_fail("An exception occured in the autograder's main function. Please contact a TA to resolve this issue.")
             return True
         def wrapper():
-            f(ag)
-        ag.safe_env(wrapper, handler)
+            return f(self)
+        return self.safe_env(wrapper, handler)
 
     def dump_results(self, data: dict) -> None:
         jsondata = json.dumps(data, ensure_ascii=False)
         with open(self.results_file, "wb") as f:
-            f.write(jsondata.encode("unicode-escape"))
+            f.write(jsondata.encode("ascii", errors="backslashreplace"))
         return self
 
     def import_tests(self, *, 
@@ -112,12 +109,12 @@ class Autograder:
     ):
         if tests_dir is None:
             tests_dir = []
-        if tests_dir is str:
+        if isinstance(tests_dir, str):
             tests_dir = [tests_dir]
 
         if test_files is None:
             test_files = []
-        if test_files is str:
+        if isinstance(test_files, str):
             test_files = [test_files]
         
         def import_file(filename, package=None):
@@ -139,7 +136,8 @@ class Autograder:
         for dir in tests_dir:
             files = sorted(os.listdir(dir), reverse=True)
             for file in files:
-                if file.endswith(".py") and file not in blacklist and os.path.isfile(file):
+                filepath = os.path.join(dir, file)
+                if file.endswith(".py") and file not in blacklist and os.path.isfile(filepath):
                     import_file(file, package=dir)
         return self
 
@@ -309,7 +307,7 @@ class Autograder:
             self.dump_results(results)
         return results
         
-    def execute(self):
+    def execute(self, generate_results: bool=True):
         global printed_welcome_message
         if not printed_welcome_message:
             printed_welcome_message = True
@@ -321,7 +319,8 @@ class Autograder:
             if self.output is None:
                 self.output = ""
             self.output = self.rate_limit.get_rate_limit_str(self) + self.output
-        self.generate_results()
+        if generate_results:
+            self.generate_results()
         return self
 
     @staticmethod
