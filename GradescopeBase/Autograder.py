@@ -9,92 +9,32 @@
 """
 This is the base of the autograder.
 """
-import json
-import time
 import datetime
+import importlib
+import json
 import os
+import time
+from typing import List, Union
+
 from .AutograderErrors import AutograderSafeEnvError, AutograderHalt
+from .AutograderLeaderboard import Leaderboard
+from .AutograderRateLimit import RateLimit
 from .AutograderSetup import global_setups
 from .AutograderTeardown import global_teardowns
 from .AutograderTest import AutograderTest, global_tests, Max
-from .Leaderboard import Leaderboard
 from .Utils import root_dir, submission_dir, results_path, get_welcome_message, is_local, WhenToRun, submission_metadata_dir
 
 printed_welcome_message = False
 
-class RateLimit:
-    def __init__(
-        self,
-        tokens:int=None,
-        seconds:int=0,
-        minutes:int=0,
-        hours:int=0,
-        days:int=0,
-        reset_time:str=None,
-        pull_prev_run=False,
-        submission_id_exclude=[]
-    ):
-        self.tokens = tokens
-        self.seconds = seconds
-        self.minutes = minutes
-        self.hours = hours
-        self.days = days
-        self.reset_time = reset_time
-        self.output = ""
-
-        self.pull_prev_run = pull_prev_run
-
-        self.submission_id_exclude = submission_id_exclude
-
-        self.oldest_token_time = None
-        self.current_submission_time = None
-
-        self.main_string = ""
-        self.tokens_used = ""
-
-    def print(self, *args, sep=' ', end='\n', file=None, flush=True, also_stdout=False):
-        msg = sep.join(map(str, args)) + end
-        if also_stdout:
-            print(msg)
-        self.output += msg
-
-    def set_next_token_regen(self, oldest_token_time, current_submission_time):
-        self.oldest_token_time = oldest_token_time
-        self.current_submission_time = current_submission_time
-
-    def rate_limit_set_main_string(self, string, tokens_used):
-        self.main_string = string
-        self.tokens_used = tokens_used
-
-    def get_rate_limit_str(self, ag: "Autograder"):
-        datetime_regen_rate = datetime.timedelta(seconds=self.total_seconds())
-        sub_to_count = None
-        if self.oldest_token_time:
-            sub_to_count = self.oldest_token_time
-        else:
-            if ag.rate_limit_does_submission_count():
-                sub_to_count = self.current_submission_time
-        
-
-        tu = self.tokens_used
-        if not ag.rate_limit_does_submission_count():
-            tu -= 1
-
-        if sub_to_count is not None:
-            next_token_regen = sub_to_count + datetime_regen_rate
-            next_token_regen_str = f"[Rate Limit]: As of this submission time, your next token will regenerate at {next_token_regen.ctime()} (PT).\n\n"
-        else:
-            next_token_regen_str = "[Rate Limit]: As of this submission time, you have not used any tokens!\n\n"
-
-        return self.main_string.format(tu) + next_token_regen_str
-
-    def total_seconds(self):
-        return self.seconds + 60 * (self.minutes + 60 * (self.hours + (24 * self.days)))
-
 class Autograder:
     use_ratelimit_when_local = False
 
-    def __init__(self, rate_limit=None, reverse_tests=False, export_tests_after_test=True, modify_results=lambda results: results):
+    def __init__(self, *,
+        rate_limit: RateLimit=None, 
+        reverse_tests: bool=False, 
+        export_tests_after_test: bool=True, 
+        modify_results=lambda results: results
+    ):
         self.tests = []
         self.setups = []
         self.teardowns = []
@@ -111,7 +51,7 @@ class Autograder:
         # reset_time is when you want to reset the submission time. You
         # can leave it out to ignore. Put the time stirng in this format:
         #  "2018-11-29T16:15:00"
-        self.rate_limit:RateLimit = rate_limit
+        self.rate_limit: RateLimit = rate_limit
         self.start_time = datetime.datetime.now()
         self.modify_results = modify_results
 
@@ -163,6 +103,45 @@ class Autograder:
         jsondata = json.dumps(data, ensure_ascii=False)
         with open(self.results_file, "wb") as f:
             f.write(jsondata.encode("unicode-escape"))
+        return self
+
+    def import_tests(self, *, 
+        tests_dir: Union[str, List[str]]=None, 
+        test_files: Union[str, List[str]]=None, 
+        blacklist: Union[str, List[str]]=None
+    ):
+        if tests_dir is None:
+            tests_dir = []
+        if tests_dir is str:
+            tests_dir = [tests_dir]
+
+        if test_files is None:
+            test_files = []
+        if test_files is str:
+            test_files = [test_files]
+        
+        def import_file(filename, package=None):
+            print(f"Importing file {filename} in package {package}.")
+            file = filename
+            if file.endswith(".py"):
+                file = file[:-3]   
+            try:
+                importlib.import_module(".{}".format(file), package=package)
+            except Exception as e:
+                print(f"Could not add a test file {filename}!")
+                import traceback
+                traceback.print_exc()
+                print(e)
+        
+        for test_file in test_files:
+            import_file(test_file)
+        
+        for dir in tests_dir:
+            files = sorted(os.listdir(dir), reverse=True)
+            for file in files:
+                if file.endswith(".py") and file not in blacklist and os.path.isfile(file):
+                    import_file(file, package=dir)
+        return self
 
     def add_test(self, test, index=None):
         if isinstance(test, AutograderTest):
@@ -170,22 +149,27 @@ class Autograder:
                 self.tests.append(test)
             else:
                 self.tests.insert(index, test)
-            return
-        raise ValueError("You must add type Test to the autograder.")
+        else:
+            raise ValueError("You must add type Test to the autograder.")
+        return self
 
     def add_setup(self, setupfn):
         self.setups.append(setupfn)
+        return self
 
     def add_teardown(self, teardownfn):
         self.teardowns.append(teardownfn)
+        return self
 
     def set_score(self, score):
         self.score = score
+        return self
     
     def add_score(self, addition):
         if self.score is None:
             self.score = 0
         self.score += addition
+        return self
     
     def get_score(self):
         score = None
@@ -207,10 +191,12 @@ class Autograder:
         if also_stdout:
             print(msg)
         self.output += msg
+        return self
 
     def create_test(self, *args, **kwargs):
         test = AutograderTest(*args, **kwargs)
         self.add_test(test)
+        return self
 
     def ag_fail(self, message: str, extra: dict={}, exit_prog=True) -> None:
         data = {
@@ -222,6 +208,7 @@ class Autograder:
         if exit_prog:
             import sys
             sys.exit()
+        return self
     
     def safe_env(self, f, handler=None):
         try:
@@ -335,6 +322,7 @@ class Autograder:
                 self.output = ""
             self.output = self.rate_limit.get_rate_limit_str(self) + self.output
         self.generate_results()
+        return self
 
     @staticmethod
     def root_dir() -> str:
