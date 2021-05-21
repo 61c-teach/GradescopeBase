@@ -122,7 +122,7 @@ class Autograder:
                 print(f"Importing file {filepath}.") 
             try:
                 # importlib.import_module(".{}".format(file), package=package)
-                module_from_file(filepath, filepath)
+                module_from_file(filepath)
             except Exception as e:
                 print(f"Could not add a test file {filepath}!")
                 import traceback
