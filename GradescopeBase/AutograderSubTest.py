@@ -9,7 +9,7 @@
 from .AutograderTest import AutograderTest
 from .Autograder import Autograder, AutograderSafeEnvError
 from . import Visibility
-from typing import Callable
+from typing import Callable, List
 from .AutograderErrors import AutograderFormatError
 from .Utils import NoneLooseVersion
 
@@ -25,7 +25,7 @@ class AutograderSubTest(AutograderTest):
         max_score: float=None,
         score: float=None,
         number: str=None, 
-        tags: [str]=None,
+        tags: List[str]=None,
         visibility: Visibility=None,
         extra_data=None,
         kill_autograder_on_error: bool=False,
@@ -101,7 +101,7 @@ class SubTestRunner(object):
     def pre_test_run(self, ag: Autograder, test: AutograderTest, data):
         pass
 
-    def get_sub_tests(self, ag: Autograder, test: AutograderTest, data):
+    def get_sub_tests(self, ag: Autograder, test: AutograderTest, data) -> List[AutograderSubTest]:
         if SUB_TESTS_KEY not in test.__dict__:
             raise AutograderFormatError("This test should have test cases but none exist!")
         sub_test = test.__dict__[SUB_TESTS_KEY]
@@ -164,7 +164,7 @@ class SubTestRunner(object):
             return False
         return sum(data["passed"]) / amt >= self.pass_fail_ratio
 
-    def run_test(self, ag: Autograder, test: AutograderTest, t, data):
+    def run_test(self, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data):
         try:
             res = t.run(ag, handler=self.stopSubTestRunnerHandler)
         except StopSubTestRunner as e:
@@ -172,6 +172,8 @@ class SubTestRunner(object):
                 test.print(e.info)
             return e
         if isinstance(res, AutograderSafeEnvError):
+            t.print(f"[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
+            t.set_score(False)
             return res.info
 
     def part_stopped(self, idx: str, ag: Autograder, test: AutograderTest, t: AutograderSubTest, data: dict):
@@ -187,7 +189,7 @@ class SubTestRunner(object):
     def stopSubTestRunnerHandler(exception):
         if isinstance(exception, StopSubTestRunner):
             return exception
-        return -1
+        return 0
 
     def runner(self, ag: Autograder, test: AutograderTest):
         data = {

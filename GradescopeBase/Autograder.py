@@ -218,7 +218,7 @@ class Autograder:
             if handler is not None:
                 try:
                     h = handler(exc)
-                    if h:
+                    if h is not None:
                         return AutograderSafeEnvError(h)
                 except Exception as exc:
                     print("An exception occurred while executing the exception handler!")

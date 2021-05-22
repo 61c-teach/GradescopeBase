@@ -117,7 +117,7 @@ class AutograderTest:
                 return False
             self.print("[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
             return True
-        ag.safe_env(f, handler=handler if handler is not None else default_handler)
+        return ag.safe_env(f, handler=handler if handler is not None else default_handler)
 
     def get_results(self):
         o = self.output
