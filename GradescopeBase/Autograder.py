@@ -133,7 +133,7 @@ class Autograder:
             import_file(test_file)
         
         for dir in tests_dir:
-            files = sorted(os.listdir(dir), reverse=True)
+            files = sorted(os.listdir(dir), reverse=False)
             for file in files:
                 filepath = os.path.join(dir, file)
                 if file.endswith(".py") and file not in blacklist and os.path.isfile(filepath):
