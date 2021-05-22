@@ -29,7 +29,7 @@ class Leaderboard:
         return False
 
     def export(self):
-        return [leaderboard_item.export() for leaderboard_item in self.items]
+        return [leaderboard_item.export() for leaderboard_item in self.items.values()]
 
 
 class LeaderboardItem:
