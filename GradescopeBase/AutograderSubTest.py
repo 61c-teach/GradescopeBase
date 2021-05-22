@@ -187,6 +187,7 @@ class SubTestRunner(object):
     def stopSubTestRunnerHandler(exception):
         if isinstance(exception, StopSubTestRunner):
             return exception
+        return -1
 
     def runner(self, ag: Autograder, test: AutograderTest):
         data = {
