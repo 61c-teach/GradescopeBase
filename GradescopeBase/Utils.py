@@ -24,6 +24,7 @@ def is_local() -> bool:
 
 def root_dir() -> str:
     """
+    This is the 'source' dir which contains all of the autograder source files you uploaded.
     This function assumes the root directory is the current directory you are in if local and the source dir if not.
     """
     if is_local():
