@@ -172,6 +172,10 @@ class SubTestRunner(object):
                 test.print(e.info)
             return e
         if isinstance(res, AutograderSafeEnvError):
+            if isinstance(res.info, AssertionError):
+                t.print(f"[AssertionError]: {res.info}")
+                t.set_score(False)
+                return
             t.print(f"[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
             t.set_score(False)
             return res.info
@@ -187,7 +191,7 @@ class SubTestRunner(object):
 
     @staticmethod
     def stopSubTestRunnerHandler(exception):
-        if isinstance(exception, StopSubTestRunner):
+        if isinstance(exception, (StopSubTestRunner, AssertionError)):
             return exception
         return 0
 

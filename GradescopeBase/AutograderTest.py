@@ -111,8 +111,12 @@ class AutograderTest:
                 set_score(0)
 
         def default_handler(exception):
+            if isinstance(exception, AssertionError):
+                self.print(f"[AssertionError]: {exception}")
+                self.set_score(False)
+                return True
             if not self.do_not_set_score:
-                self.set_score(0)
+                self.set_score(False)
             if self.kill_autograder_on_error:
                 return False
             self.print("[Error]: An unexpected error occured in the Autograder when attempting to run this testcase! Please contact a TA if this persists.")
